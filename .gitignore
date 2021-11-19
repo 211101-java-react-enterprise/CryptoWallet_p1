@@ -1,0 +1,12 @@
+#IntelliJ Files
+.idea/
+*.iml
+
+#Completed build files
+out/
+target/
+*.class
+*.jar
+
+#private files
+*.properties
