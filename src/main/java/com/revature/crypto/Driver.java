@@ -5,10 +5,11 @@ public class Driver {
         Coinbase coinbase = new Coinbase();
         String currencies = coinbase.getSupportedCurrencies();
         String exchangeRates = coinbase.getExchangeRates();
-        String buyPrice = coinbase.getBuyPrice("ASM-USDT");//doesn't work. returns 404 not found
-        String tradingPairs = coinbase.getTradingPairs();//doesn't work. returns 403 forbidden
+        System.out.println(coinbase.getBuyPrice("BTC-USD"));//works!
         System.out.println(exchangeRates);
-
+        //String tradingPairs = coinbase.getTradingPairs();//doesn't work. returns 403 forbidden
+        //System.out.println(exchangeRates);
+        //System.out.println(coinbase.getProductStats());
 
     }
 }

@@ -68,7 +68,7 @@ public class Coinbase {
     }
 
     public String getBuyPrice(String currency_pair){//ex) BTC-USD
-        String url = "https://api.coinbase.com/v2/prices/:"+currency_pair+"/buy";
+        String url = "https://api.coinbase.com/v2/prices/"+currency_pair+"/buy";
         return getData(url);
     }
 
@@ -80,6 +80,8 @@ public class Coinbase {
     public String getTradingPairs(){
         return getData("https://api.exchange.coinbase.com/products");
     }
+
+    public String getProductStats() { return getData("https://api.exchange.coinbase.com/products/BTC-USD/stats");}
 
 
 
