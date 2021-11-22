@@ -10,6 +10,7 @@ import java.io.IOException;
         -Note: code 200 means success
      */
 public class Coinbase {
+
     private String getData(String urlText) {
         try {
             URL url = new URL(urlText);
