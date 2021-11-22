@@ -78,12 +78,12 @@ public class Coinbase {
       https://docs.cloud.coinbase.com/exchange/reference/
       403 forbidden
      */
-    /*public String getTradingPairs(){
+    public String getTradingPairs(){
         return getData("https://api.exchange.coinbase.com/products");
     }
 
     public String getProductStats() { return getData("https://api.exchange.coinbase.com/products/BTC-USD/stats");}
 
-    */
+
 
 }
