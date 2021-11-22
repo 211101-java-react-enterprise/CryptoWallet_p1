@@ -18,7 +18,7 @@ public class WalletService {
     }
 
     public void printAllCryptos(){
-        System.out.println(coinbase.getTradingPairs());
+        //System.out.println(coinbase.getTradingPairs());
     }
 
 }
