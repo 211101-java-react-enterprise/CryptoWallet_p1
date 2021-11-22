@@ -3,8 +3,8 @@ import java.net.*;
 import java.io.*;
 import java.io.IOException;
     /*
-        -methods call getData(String url) which uses native stuff in java.net. cloud.coinbase API uses OKHttpClient in java example code, but I didn't
-            see this until after I already did it the hard way :-/
+        -methods call getData(String url) which use native stuff in java.net to return a big string formatted like a json.
+         cloud.coinbase API uses OKHttpClient in java example code, but I didn't see this until after I already did it the hard way :-/
         -calls to developer.coinbase work with the exception of getBuyPrice() which returns 404, not found. Problem with url?
         -calls to cloud.coinbase are returning 403, forbidden. Haven't yet tested extensively (perhaps switch to OKHttpClient if unable to fix)
         -Note: code 200 means success
@@ -75,6 +75,7 @@ public class Coinbase {
     /*
     --------------------------------------------------------------------------------------------------------------
       https://docs.cloud.coinbase.com/exchange/reference/
+      403 forbidden
      */
     public String getTradingPairs(){
         return getData("https://api.exchange.coinbase.com/products");
