@@ -64,8 +64,11 @@ public class CoinbaseDAO {
         return getData("https://api.coinbase.com/v2/currencies");
     }
 
-    public String getExchangeRates_V2(){
-        return getData("https://api.coinbase.com/v2/exchange-rates");
+    public String[] getExchangeRates_V2(){
+        String data = getData("https://api.coinbase.com/v2/exchange-rates");
+        System.out.println(data);
+        String[] elements = data.split(",");
+        return elements;
     }
 
     public String getBuyPrice_V2(String currency_pair){//ex) BTC-USD
@@ -86,6 +89,17 @@ public class CoinbaseDAO {
         return getData("https://api.exchange.coinbase.com/products/BTC-USD/stats");
     }
 
-
+    //for debugging and visualizing data. Will eventually be removed
+    private void writeToFile(String file){
+        try {
+            FileWriter myWriter = new FileWriter("exchange_rates.json");
+            myWriter.write(file);
+            myWriter.close();
+            System.out.println("Successfully wrote to the file.");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
 
 }
