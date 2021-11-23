@@ -1,29 +1,29 @@
-package com.revature.crypto;
+package com.revature.crypto.daos;
 import java.net.*;
 import java.io.*;
 import java.io.IOException;
-    /*
-        -methods call getData(String url) which use native stuff in java.net to return a big string formatted like a json.
-         cloud.coinbase API uses OKHttpClient in java example code, but I didn't see this until after I already did it the hard way :-/
-        -calls to developer.coinbase work with the exception of getBuyPrice() which returns 404, not found. Problem with url?
-        -calls to cloud.coinbase are returning 403, forbidden. Haven't yet tested extensively (perhaps switch to OKHttpClient if unable to fix)
-        -Note: code 200 means success
-     */
-public class Coinbase {
+import java.util.ArrayList;
+
+/*
+    -methods pull information from one of two coinbase apis (links below) and return a string formatted like a json.
+    -quarries are made with HttpURLConnection from java.net via getData(String url) method.
+    -code 200 means success
+ */
+public class CoinbaseDAO {
 
     private String getData(String urlText) {
         try {
+            //create url and set up connection
             URL url = new URL(urlText);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
 
-            //headers
-            //con.setRequestProperty("Accept", "application/json");
-            //String contentType = con.getHeaderField("Accept");
-
             //timeout
             con.setConnectTimeout(5000);
             con.setReadTimeout(5000);
+
+            //name the request
+            con.addRequestProperty("User-Agent", "CryptoWalletApp");
 
             //reading the response
             int status = con.getResponseCode();
@@ -49,9 +49,8 @@ public class Coinbase {
     }
 
     /*
-    Note: For some reason, coinbase has two separate apis, with different methods. I think they both
-    come from the same database but its confusing because there are repeats. For instance, both apis have a call that
-    returns a json of all crypto-currencies.
+    Note: Coinbase has two separate apis that this application uses. They seem to come from the same database and even have
+    similar or repeating methods. For instance, both apis have a call that returns a json of all crypto-currencies.
     Although they seem to retrieve the same data, the URLS are different. I think it might have something to do with
     coinbase exchange vs coinbase pro (different services that are owned by the same parent company, coinbase global).
 
@@ -59,16 +58,17 @@ public class Coinbase {
     inconsistencies down the road.
     -----------------------------------------------------------------------------------------------------
     https://developers.coinbase.com/api/v2#data-endpoints
+    all methods from this API are tagged with _V2 (version 2, as shown in URL)
      */
-    public String getSupportedCurrencies(){
+    public String getSupportedCurrencies_V2(){
         return getData("https://api.coinbase.com/v2/currencies");
     }
 
-    public String getExchangeRates(){
+    public String getExchangeRates_V2(){
         return getData("https://api.coinbase.com/v2/exchange-rates");
     }
 
-    public String getBuyPrice(String currency_pair){//ex) BTC-USD
+    public String getBuyPrice_V2(String currency_pair){//ex) BTC-USD
         String url = "https://api.coinbase.com/v2/prices/"+currency_pair+"/buy";
         return getData(url);
     }
@@ -76,13 +76,15 @@ public class Coinbase {
     /*
     --------------------------------------------------------------------------------------------------------------
       https://docs.cloud.coinbase.com/exchange/reference/
-      403 forbidden
+      All methods coming from this API are tagged with _E (exchange, as shown in url)
      */
-    public String getTradingPairs(){
+    public String getTradingPairs_E(){
         return getData("https://api.exchange.coinbase.com/products");
     }
 
-    public String getProductStats() { return getData("https://api.exchange.coinbase.com/products/BTC-USD/stats");}
+    public String getProductStats_E() {
+        return getData("https://api.exchange.coinbase.com/products/BTC-USD/stats");
+    }
 
 
 

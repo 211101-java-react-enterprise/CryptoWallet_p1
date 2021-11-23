@@ -1,19 +1,19 @@
 package com.revature.crypto.services;
 
-import com.revature.crypto.Coinbase;
+import com.revature.crypto.daos.CoinbaseDAO;
 
 import java.io.FileWriter;
 import java.io.IOException;
 
 public class CoinbaseService {
-    Coinbase coinbase;
+    CoinbaseDAO coinbaseDAO;
 
     public CoinbaseService (){
-        coinbase = new Coinbase();
+        coinbaseDAO = new CoinbaseDAO();
     }
 
     public void listExchangeRates(){
-        String exchangeRates = coinbase.getExchangeRates();
+        String exchangeRates = coinbaseDAO.getExchangeRates_V2();
         System.out.println(exchangeRates);
         String[] rateList = exchangeRates.split(",");
         //String[]

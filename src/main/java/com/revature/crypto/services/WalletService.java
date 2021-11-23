@@ -1,15 +1,15 @@
 package com.revature.crypto.services;
 
-import com.revature.crypto.Coinbase;
+import com.revature.crypto.daos.CoinbaseDAO;
 import com.revature.crypto.models.Wallet;
 
 public class WalletService {
     Wallet sessionWallet;
-    Coinbase coinbase;
+    CoinbaseDAO coinbaseDAO;
 
-    WalletService(Wallet sessionWallet, Coinbase coinbase){
+    WalletService(Wallet sessionWallet, CoinbaseDAO coinbaseDAO){
         this.sessionWallet = sessionWallet;
-        this.coinbase = coinbase;
+        this.coinbaseDAO = coinbaseDAO;
     }
 
     //TODO: Implement me!
