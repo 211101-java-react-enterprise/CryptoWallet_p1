@@ -13,8 +13,32 @@ public class CoinbaseDAOTestDriver {
 
         CoinbaseDAO coinbaseDAO = new CoinbaseDAO();
 
-         Coin[] coins = coinbaseDAO.getAllCoins();
-         double value = coinbaseDAO.valueOf(coins[0].getId()+"-USD");
+         //Coin[] coins = coinbaseDAO.getAllCoins2();
+         List<Coin> coins = coinbaseDAO.getAllCoins();
+
+         double failCount = 0;
+         double successCount = 0;
+         double coti = (coinbaseDAO.valueOf("COTI-USD"));
+         double dollars = 100;
+         double converted_amount = dollars/coti;
+        System.out.println(converted_amount);
+
+//         for(Coin coin : coins){
+//             //if(coin.getId()== "BTC-EUR") System.out.println("BTC-USD");
+//             //System.out.println(coin.getId());
+//             if(coinbaseDAO.valueOf(coin.getId())!=-1){
+//                 System.out.println("success: "+coin.getId());
+//                 successCount+=1;
+//             }
+//             else {
+//                 System.out.println("failed: "+coin.getId());
+//                 failCount+=1;
+//             }
+//         }
+
+        //System.out.println("Success rate: %"+(successCount/(successCount+failCount))*100);//64.2% success rate
+        //double value = coinbaseDAO.valueOf(coins[0].getId());
+         //double value = coinbaseDAO.valueOf(coins[0].getId());
 //         for(int i = 0; i < coins.length; i++){
 //             System.out.println(coins[i].getName());
 //         }
