@@ -14,6 +14,7 @@ public class CoinbaseDAOTestDriver {
         CoinbaseDAO coinbaseDAO = new CoinbaseDAO();
 
          Coin[] coins = coinbaseDAO.getAllCoins();
+         double value = coinbaseDAO.valueOf(coins[0].getId()+"-USD");
 //         for(int i = 0; i < coins.length; i++){
 //             System.out.println(coins[i].getName());
 //         }

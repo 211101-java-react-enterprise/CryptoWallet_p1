@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /*
     -methods pull information from one of two coinbase apis (links below) and return a string formatted like a json.
@@ -79,12 +80,11 @@ public class CoinbaseDAO {
             List<Coin> pairs = new ArrayList<>();
             String json = getSupportedCurrencies_V2();
             String cutJson = json.substring(8, json.length()-1);
-            //JsonNode jsonNode = mapper.read
-            //Coin coin = mapper.readValue(cutJson, Coin.class);
-            //System.out.println(coin.getName());
+            //JsonNode node = mapper.g
+            //List<String> list = mapper.readValue(cutJson, new TypeReference<ArrayList<String>>() { });
             Coin[] coins = mapper.readValue(cutJson, Coin[].class);
-            //pairs = Arrays.asList(mapper.readValue(cutJson, Coin[].class));
 
+            //pairs = Arrays.asList(mapper.readValue(cutJson, Coin[].class));
             return coins;
         } catch(Exception e){
             System.out.println("Trouble parsing the data");
@@ -94,6 +94,8 @@ public class CoinbaseDAO {
 
     }
 
+    //does same thing as valueOf method, but is uses getExchange rates... making it less space efficient and unnecessarily complicated.
+    //acts as a good example of how to use ObjectMapper.get("value") to find specific element in json
     public double getConversion(String coin, double amount){
         try {
             String json = getExchangeRates_V2();
@@ -117,6 +119,7 @@ public class CoinbaseDAO {
         return false;
     }
 
+    //to be removed. For reference about json node and
     private boolean parseOLD(String data){
         try {
             String newData = data.substring(34, data.length()-2);//natively, the json file is nested. This cuts out the fluff
@@ -170,12 +173,12 @@ public class CoinbaseDAO {
       https://docs.cloud.coinbase.com/exchange/reference/
       All methods coming from this API are tagged with _E (exchange, as shown in url)
      */
-//    public String getTradingPairs_E(){
-//        return getData("https://api.exchange.coinbase.com/products");
-//    }
-//
-//    public String getProductStats_E() {
-//        return getData("https://api.exchange.coinbase.com/products/BTC-USD/stats");
-//    }
+    public String getTradingPairs_E(){
+        return getData("https://api.exchange.coinbase.com/products");
+    }
+
+    public String getProductStats_E() {
+        return getData("https://api.exchange.coinbase.com/products/BTC-USD/stats");
+    }
 
 }
