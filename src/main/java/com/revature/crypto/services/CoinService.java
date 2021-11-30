@@ -1,5 +1,7 @@
 package com.revature.crypto.services;
 
+import com.revature.crypto.models.Coin;
+
 /**
  *      CoinAmountService Class holds verification logic for user
  *
@@ -9,7 +11,7 @@ package com.revature.crypto.services;
  *      Currency Pair needs to be checked against what pairs are
  *      valid by coinbase API
  */
-public class CoinAmountService {
+public class CoinService {
 
     /**
      *      CoinAmountService#isCoinAmountValid is used to check
@@ -21,7 +23,7 @@ public class CoinAmountService {
      *      returns: true if CoinAmount is larger than 0
      *               false if coin amount is less than or equal to 0
      */
-    public boolean isCoinAmountValid(CoinAmount newCoinAmount) {
-        return newCoinAmount.getAmount() > 0;
+    public boolean isCoinAmountValid(Coin newCoin) {
+        return newCoin.getAmount() > 0;
     }
 }
