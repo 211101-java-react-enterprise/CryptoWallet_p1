@@ -12,7 +12,7 @@ public class User {
 
     //000000000000000000000000000000000000000000000000000000000000000000000000000000000
 
-    private String user_Id;
+    private String userId;
     private String username;
     private String password;
     private String first_name;
@@ -28,22 +28,22 @@ public class User {
 
     }
 
-    public User(String user_Id, String username, String password, String first_name, String last_name) {
-        this.user_Id = user_Id;
+    public User(String userId, String username, String password, String firstName, String lastName) {
+        this.userId = userId;
         this.username = username;
         this.password = password;
-        this.first_name = first_name;
-        this.last_name = last_name;
+        this.first_name = firstName;
+        this.last_name = lastName;
     }
     //CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
 
-    public String getUser_Id() {
-        return user_Id;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUser_Id(String user_Id) {
-        this.user_Id = user_Id;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getUsername() {
@@ -62,19 +62,19 @@ public class User {
         this.password = password;
     }
 
-    public String getFirst_name() {
+    public String getFirstName() {
         return first_name;
     }
 
-    public void setFirst_name(String first_name) {
+    public void setFirstName(String first_name) {
         this.first_name = first_name;
     }
 
-    public String getLast_name() {
+    public String getLastName() {
         return last_name;
     }
 
-    public void setLast_name(String last_name) {
+    public void setLastName(String last_name) {
         this.last_name = last_name;
     }
 }
