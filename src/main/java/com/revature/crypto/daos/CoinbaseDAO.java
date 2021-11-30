@@ -1,15 +1,14 @@
 package com.revature.crypto.daos;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.revature.crypto.models.Coin;
 
 import java.net.*;
 import java.io.*;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /*
     -methods pull information from one of two coinbase apis (links below) and return a string formatted like a json.
@@ -19,121 +18,48 @@ import java.util.List;
 public class CoinbaseDAO {
     ObjectMapper mapper;
 
-    public CoinbaseDAO(){
+    public CoinbaseDAO() {
         mapper = new ObjectMapper();
     }
 
-    private String getData(String urlText) {
-        try {
-            //create url and set up connection
-            URL url = new URL(urlText);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
-
-            //timeout
-            con.setConnectTimeout(5000);
-            con.setReadTimeout(5000);
-
-            //name the request
-            con.addRequestProperty("User-Agent", "CryptoWalletApp");
-
-            //reading the response
-            int status = con.getResponseCode();
-            System.out.println(status);
-
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(con.getInputStream()));
-            String inputLine;
-            StringBuffer content = new StringBuffer();
-            while ((inputLine = in.readLine()) != null) {
-                content.append(inputLine);
-            }
-            in.close();
-            con.disconnect();
-            return content.toString();
-        } catch (Exception e){
-            System.out.println("problem retrieving data");
-            //TODO log error. Find more specific exception types
-            // Is it better to put try catch blocks in the other get() methods within this class instead,
-            // to allow for more specific messaging?
-            return null;
-        }
-    }
-
-    public double valueOf(String coin){
+    //returns a USD value given a supported coin
+    public double valueOf(String coin) {
         try {
             String json = getBuyPrice_V2(coin);
-            System.out.println(json);
+            //System.out.println(json);
             JsonNode jsonNode = mapper.readTree(json);
             double value = Double.parseDouble(jsonNode.get("data").get("amount").textValue());
             return value;
-        }catch(Exception e){
-            System.out.println("Trouble parsing the data");
+        } catch (Exception e) {
+            //System.out.println("Trouble parsing the data");
             return -1;
             //TODO handle and log exception
         }
     }
 
-    public Coin[] getAllCoins(){
-        try{
+    //returns a list of all supported coins
+    public List<Coin> getAllCoins() {
+        try {
             List<Coin> pairs = new ArrayList<>();
-            String json = getSupportedCurrencies_V2();
-            String cutJson = json.substring(8, json.length()-1);
-            //JsonNode jsonNode = mapper.read
-            //Coin coin = mapper.readValue(cutJson, Coin.class);
-            //System.out.println(coin.getName());
-            Coin[] coins = mapper.readValue(cutJson, Coin[].class);
-            //pairs = Arrays.asList(mapper.readValue(cutJson, Coin[].class));
+            String json = getTradingPairs_E();
+            //Coin[] coins = mapper.readValue(json, Coin[].class);
+            TypeFactory typeFactory = mapper.getTypeFactory();
+            List<Coin> coins = mapper.
+                    readValue(json, typeFactory.
+                            constructCollectionType(List.class, Coin.class));
+            coins = coins.stream().filter(c -> c.getId().endsWith("USD")).collect(Collectors.toList());
+//            for(Coin coin: coins){
+//                String cut_id = coin.getId().substring(coin.getId().length()-3);//checks if currency paired with USD
+//                if(!cut_id.equals("USD")){
+//                    System.out.println("removing coin: "+coin.getId());
+//                    coins.remove(coin);
+//                }
+//            }
 
             return coins;
-        } catch(Exception e){
-            System.out.println("Trouble parsing the data");
+        } catch (Exception e) {
+            //System.out.println("Trouble parsing the data");
             return null;
-            //TODO handle and log exception
-        }
-
-    }
-
-    public double getConversion(String coin, double amount){
-        try {
-            String json = getExchangeRates_V2();
-            String cutJson = json.substring(34, json.length()-2);//natively, the json file is nested. This cuts out the fluff
-            JsonNode jsonNode = mapper.readTree(cutJson);
-            double value = Double.parseDouble(jsonNode.get(coin).textValue());
-            System.out.println(coin+": "+value+" per dollar");
-            return (1/value)*amount;
-        }catch(Exception e){
-            System.out.println("Trouble parsing the data");
-            return -1;
-            //TODO handle and log exception
-        }
-    }
-
-    private boolean parse(String data){
-        String cutData = data.substring(35, data.length()-3);//natively, the json file is nested. This cuts out the fluff
-        System.out.println(cutData);
-
-
-        return false;
-    }
-
-    private boolean parseOLD(String data){
-        try {
-            String newData = data.substring(34, data.length()-2);//natively, the json file is nested. This cuts out the fluff
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode jsonNode = mapper.readTree(newData);
-            JsonNode jsonNode1 = mapper.readTree(data);
-            boolean isArray = jsonNode1.get("data").get("rates").isArray();
-            System.out.println("isArray: "+isArray);
-            String json = jsonNode.get("MANA").textValue();//get("data").get("rates").get("AED").textValue();
-            System.out.println(json);
-            //mapper.writeValue(new File("mapperValue.txt"), json);
-            //"[{\"currency\":\"USD\", \"rates\":38}, {\"name\":\"laplap\", \"age\":5}]";
-            List<String> list = mapper.readValue(json, new TypeReference<List<String>>() {});
-            return false;
-        }catch(Exception e){
-            System.out.println("Trouble parsing the data");
-            return false;
             //TODO handle and log exception
         }
     }
@@ -150,19 +76,20 @@ public class CoinbaseDAO {
     https://developers.coinbase.com/api/v2#data-endpoints
     all methods from this API are tagged with _V2 (version 2, as shown in URL)
      */
-    public String getSupportedCurrencies_V2(){
+    public String getBuyPrice_V2(String currency_pair) {//ex) BTC-USD
+        String url = "https://api.coinbase.com/v2/prices/" + currency_pair + "/buy";
+        return getData(url);
+    }
+
+    //not implemented
+    public String getSupportedCurrencies_V2() {
         return getData("https://api.coinbase.com/v2/currencies");
     }
 
-    public String getExchangeRates_V2(){
+    //not implemented
+    public String getExchangeRates_V2() {
         String data = getData("https://api.coinbase.com/v2/exchange-rates");
         return data;
-    }
-
-
-    public String getBuyPrice_V2(String currency_pair){//ex) BTC-USD
-        String url = "https://api.coinbase.com/v2/prices/"+currency_pair+"/buy";
-        return getData(url);
     }
 
     /*
@@ -170,12 +97,54 @@ public class CoinbaseDAO {
       https://docs.cloud.coinbase.com/exchange/reference/
       All methods coming from this API are tagged with _E (exchange, as shown in url)
      */
-//    public String getTradingPairs_E(){
-//        return getData("https://api.exchange.coinbase.com/products");
-//    }
-//
-//    public String getProductStats_E() {
-//        return getData("https://api.exchange.coinbase.com/products/BTC-USD/stats");
-//    }
+    public String getTradingPairs_E() {
+        return getData("https://api.exchange.coinbase.com/products");
+    }
 
+    //not implemented
+    public String getProductStats_E() {
+        return getData("https://api.exchange.coinbase.com/products/BTC-USD/stats");
+    }
+
+
+    /*---------------------------------------------------------------------------------------------------------------
+        This method uses HttpURLConnecton from java.net to fetch data from the apis.
+        -takes in a url from the API and returns a raw json string
+     */
+    private String getData(String urlText) {
+        try {
+            //create url and set up connection
+            URL url = new URL(urlText);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+
+            //timeout
+            con.setConnectTimeout(5000);
+            con.setReadTimeout(5000);
+
+            //name the request
+            con.addRequestProperty("User-Agent", "CryptoWalletApp");
+
+            //reading the response
+            int status = con.getResponseCode();
+            //System.out.println(status);
+
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer content = new StringBuffer();
+            while ((inputLine = in.readLine()) != null) {
+                content.append(inputLine);
+            }
+            in.close();
+            con.disconnect();
+            return content.toString();
+        } catch (Exception e) {
+            //System.out.println("problem retrieving data");
+            //TODO log error. Find more specific exception types
+            // Is it better to put try catch blocks in the other get() methods within this class instead,
+            // to allow for more specific messaging?
+            return null;
+        }
+    }
 }
