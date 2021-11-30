@@ -1,7 +1,6 @@
 package com.revature.crypto.services;
 
 import com.revature.crypto.daos.CoinbaseDAO;
-import com.revature.crypto.models.Wallet;
 
 public class WalletService {
     Wallet sessionWallet;

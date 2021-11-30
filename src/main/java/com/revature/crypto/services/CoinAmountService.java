@@ -1,7 +1,5 @@
 package com.revature.crypto.services;
 
-import com.revature.crypto.models.CoinAmount;
-
 /**
  *      CoinAmountService Class holds verification logic for user
  *
