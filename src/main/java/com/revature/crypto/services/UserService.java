@@ -1,5 +1,7 @@
 package com.revature.crypto.services;
 
+import com.revature.CryptoORM_P1.mapper.SQLMapper;
+import com.revature.crypto.daos.UserDAO;
 import com.revature.crypto.exceptions.AuthenticationException;
 import com.revature.crypto.exceptions.InvalidRequestException;
 import com.revature.crypto.models.User;
@@ -11,6 +13,11 @@ import com.revature.crypto.models.User;
  */
 public class UserService {
 
+    UserDAO userDAO;
+
+    public boolean registerNewUser(User newUser) {
+        return false;
+    }
     /**
      *      UserService#isUserValid is used to check if a user has
      *      provided valid information before persisting to database.
