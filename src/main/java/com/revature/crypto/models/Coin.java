@@ -5,34 +5,44 @@ This model is meant to represent the getSupportedCurrencies method
  */
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.revature.CryptoORM_P1.annotations.Column;
+import com.revature.CryptoORM_P1.annotations.Table;
+import com.revature.CryptoORM_P1.annotations.Value;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 
+@Table(tableName = "coin")
 public class Coin {//extends Object {
-    private String user_Id;//pk/fk
+    @Column(columnName = "currency_pair", columnType = "v")
     private String currencyPair;//pk (composite)
+    @Column(columnName = "amount", columnType = "n")
     private double amount;
+    @Column(columnName = "user_uuid", columnType = "v")
+    private String user_Id;//pk/fk
+
 
     //constructors
     Coin(String currencyPair, double amount){//called when user updates existing coin
         this.currencyPair = currencyPair;
         this.amount = amount;
     }
-    Coin(String currencyPair, double amount, String user_Id){//called when user gets a new coin
+    public Coin(String currencyPair, double amount, String user_Id){//called when user gets a new coin
         this.currencyPair = currencyPair;
         this.amount = amount;
         this.user_Id = user_Id;
     }
 
-    //getters and setters:
+    @Value(correspondingColumn = "user_uuid")
     public String getUser_Id() {
         return user_Id;
     }
+
 
     public void setUser_Id(String user_Id) {
         this.user_Id = user_Id;
     }
 
+    @Value(correspondingColumn = "currency_pair")
     public String getCurrencyPair() {
         return currencyPair;
     }
@@ -41,6 +51,7 @@ public class Coin {//extends Object {
         this.currencyPair = currencyPair;
     }
 
+    @Value(correspondingColumn = "amount")
     public double getAmount() {
         return amount;
     }
