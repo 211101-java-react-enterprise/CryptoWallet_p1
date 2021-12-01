@@ -49,7 +49,9 @@ public class OrmDriver {
 
         //mapper.joinSelect(user, Coin.class);
         //mapper.join
-        mapper.insert(coin);
+        int rowsInserted = mapper.insert(user);
+
+        System.out.println(rowsInserted);
 
 
     }
