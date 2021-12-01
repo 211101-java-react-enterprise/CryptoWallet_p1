@@ -3,12 +3,9 @@ package com.revature.crypto;
 import com.revature.CryptoORM_P1.mapper.SQLMapper;
 import com.revature.crypto.models.Coin;
 import com.revature.crypto.models.User;
-import com.revature.crypto.util.datasource.ConnectionFactory;
 
 import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+
 import java.util.Properties;
 
 public class OrmDriver {
