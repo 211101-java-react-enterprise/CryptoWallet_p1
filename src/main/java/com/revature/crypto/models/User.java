@@ -16,17 +16,17 @@ import com.revature.CryptoORM_P1.annotations.Value;
 public class User {
 
     //000000000000000000000000000000000000000000000000000000000000000000000000000000000
-    @Column(columnName = "user_uuid")
+    @Column(columnName = "user_uuid", columnType = "v")
     private String userId;
-    @Column(columnName = "username")
+    @Column(columnName = "username", columnType = "v")
     private String username;
-    @Column(columnName = "password")
+    @Column(columnName = "password", columnType = "v")
     private String password;
-    @Column(columnName = "first_name")
+    @Column(columnName = "first_name", columnType = "v")
     private String firstName;
-    @Column(columnName = "last_name")
+    @Column(columnName = "last_name", columnType = "v")
     private String lastName;
-    @Column(columnName = "dollars_invested")
+    @Column(columnName = "dollars_invested", columnType = "n")
     private double amount_invested;
 
     //000000000000000000000000000000000000000000000000000000000000000000000000000000000

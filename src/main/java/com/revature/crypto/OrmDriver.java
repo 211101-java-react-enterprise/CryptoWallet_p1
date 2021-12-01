@@ -4,12 +4,22 @@ import com.revature.CryptoORM_P1.mapper.SQLMapper;
 import com.revature.crypto.models.User;
 import com.revature.crypto.util.datasource.ConnectionFactory;
 
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Properties;
 
 public class OrmDriver {
     public static void main(String[] args) {
-        SQLMapper mapper = new SQLMapper(ConnectionFactory.getInstance().getConnection());
+        Properties props = new Properties();
+        try {
+            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            props.load(loader.getResourceAsStream("db.properties"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        SQLMapper mapper = new SQLMapper(props);
         String id = "UUID";
         String username= "namebo";
         String password = "password2";
@@ -18,12 +28,8 @@ public class OrmDriver {
         double amount = 34.3;
         User user = new User(id, username, password, firstname, lastname, amount);
 
-        PreparedStatement pstmt = mapper.insert(user);
-        try{
-            int rowsInserted = pstmt.executeUpdate();
-            System.out.println(rowsInserted);
-        } catch(Exception e){
-            e.printStackTrace();
-        }
+        int rowsInserted = mapper.insert(user);
+
+        System.out.println(rowsInserted);
     }
 }
