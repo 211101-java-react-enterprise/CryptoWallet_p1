@@ -28,6 +28,8 @@ public class TestDependencyDriver {
         TestDependencyDriver test = new TestDependencyDriver("This is a test string!");
 
         System.out.println(sqlMapper.insert(test));
+
+
     }
 
 }
