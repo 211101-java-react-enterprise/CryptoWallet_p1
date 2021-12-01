@@ -10,7 +10,7 @@ import java.util.Properties;
 @Table(tableName = "Test_Annotation")
 public class TestDependencyDriver {
 
-    static SQLMapper sqlMapper = new SQLMapper(new Properties());
+    static SQLMapper sqlMapper = SQLMapper.getInstance();
 
     @Column(columnName = "Test_Column_Annotation")
     String testString;
