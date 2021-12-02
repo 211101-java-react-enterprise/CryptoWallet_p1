@@ -47,6 +47,10 @@ public class User {
         this.lastName = lastName;
         this.amount_invested = amount_invested;
     }
+
+    public User(){
+        System.out.println("hi~");
+    }
     //CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
     @Value(correspondingColumn = "user_uuid")

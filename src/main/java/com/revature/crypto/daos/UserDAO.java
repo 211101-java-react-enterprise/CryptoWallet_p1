@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
@@ -41,6 +42,15 @@ public class UserDAO implements CrudDAO<User> {
 
     @Override
     public List<User> findAll() {
+        ResultSet rs = mapper.select(new User());
+        List<User> users = new ArrayList<>();
+        try{
+            while(rs.next()){
+                users.add(createUser(rs));
+            }
+        } catch(Exception e){
+            throw new InvalidRequestException("Failed to retrieve list of users");
+        }
         return null;
     }
 

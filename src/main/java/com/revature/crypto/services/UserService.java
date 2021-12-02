@@ -16,8 +16,8 @@ public class UserService {
     UserDAO userDAO;
     User sessionUser;
 
-    public UserService(User sessionUser){
-        this.sessionUser = sessionUser;
+    public UserService(UserDAO userDAO){
+        this.userDAO = userDAO;
     }
 
     public boolean registerNewUser(User newUser) {
