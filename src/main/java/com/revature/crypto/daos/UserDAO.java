@@ -20,25 +20,16 @@ public class UserDAO implements CrudDAO<User> {
     private SQLMapper mapper;
 
     public UserDAO(){
-//        Properties props = new Properties();
-//        try {
-//            ClassLoader loader = Thread.currentThread().getContextClassLoader();
-//            props.load(loader.getResourceAsStream("db.properties"));
-//            SQLMapper.setProperties(props);
-//            mapper = SQLMapper.getInstance();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
         mapper = SQLMapper.getInstance();
     }
 
-    public UserDAO findUserByUsername(String username) {
-      return null;
+    public User findUserByUsername(User sessionUser) {
+      return createUser(mapper.select(sessionUser, "username"));
     }
 
-    public User findUserByUsernameAndPassword(String username, String password) {
-        return null;
+    public User findUserByUsernameAndPassword(User sessionUser) {
+        return createUser(
+                mapper.select(sessionUser, "username", "password"));
     }
 
     @Override
@@ -54,23 +45,9 @@ public class UserDAO implements CrudDAO<User> {
     }
 
     @Override
-    public User findById(String id) {
-        ResultSet rs = mapper.select(new User(id, "", "", "", "", -1), "user_uuid");
-        User newUser;
-        try{
-            if(rs.next()){
-                return new User(rs.getString("user_uuid"),
-                        rs.getString("username"),
-                        rs.getString("password"),
-                        rs.getString("first_name"),
-                        rs.getString("password"),
-                        rs.getDouble("dollars_invested"));
-            }
-        }catch(Exception e) {
-            throw new InvalidRequestException("No matching Id found in database");
-        }
-        return null;
-
+    public User findById(User sessionUser) {
+        ResultSet rs = mapper.select(sessionUser);
+        return createUser(rs);
     }
 
     @Override
@@ -87,4 +64,19 @@ public class UserDAO implements CrudDAO<User> {
         else return false;
     }
 
+    private User createUser(ResultSet rs){
+        try{
+            if(rs.next()){
+                return new User(rs.getString("user_uuid"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("first_name"),
+                        rs.getString("password"),
+                        rs.getDouble("dollars_invested"));
+            }
+        }catch(Exception e) {
+            throw new InvalidRequestException("No matching Id found in database");
+        }
+        return null;
+    }
 }
