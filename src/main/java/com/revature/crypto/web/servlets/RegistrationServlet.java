@@ -1,6 +1,5 @@
 package com.revature.crypto.web.servlets;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.crypto.models.User;
 import com.revature.crypto.services.UserService;
@@ -31,10 +30,38 @@ public class RegistrationServlet extends HttpServlet {
         try {
             User newUser = objectMapper.readValue(req.getInputStream(), User.class);
 
-            boolean wasRegistered = userService.registerNewUser(newUser);
+            if (userService.registerNewUser(newUser)) {
+                resp.setStatus(201);
+            } else {
+                //failed to persist user to database
+                resp.setStatus(500);
+            }
 
-        } catch (JsonParseException e) {
+        } catch (Exception e) {
+            // bad request from user
+            resp.setStatus(400);
+            e.printStackTrace();
 
+        }
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        PrintWriter respWriter = resp.getWriter();
+        resp.setContentType("application/json");
+
+        try {
+            User deleteUser = (User) req.getSession(false).getAttribute("verifiedUser");
+
+            if (userService.deleteUser(deleteUser)) {
+                req.getSession(false).invalidate();
+                resp.setStatus(204);
+            } else {
+                resp.setStatus(500);
+            }
+        } catch (Exception e) {
+            resp.setStatus(400);
         }
     }
 }
