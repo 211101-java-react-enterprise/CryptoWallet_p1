@@ -1,6 +1,9 @@
 package com.revature.crypto.web.util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.CryptoORM_P1.mapper.SQLMapper;
+import com.revature.crypto.daos.CoinDAO;
+import com.revature.crypto.daos.UserDAO;
 import com.revature.crypto.services.CoinService;
 import com.revature.crypto.services.UserService;
 
@@ -24,6 +27,16 @@ public class ContextLoaderListener implements ServletContextListener {
             e.printStackTrace();
         }
         SQLMapper.setProperties(props);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        UserDAO userDAO = new UserDAO();
+        UserService userService = new UserService(userDAO);
+
+        CoinDAO coinDAO = new CoinDAO();
+        CoinService coinService = new CoinService(coinDAO);
+
+
     }
 
 
