@@ -5,6 +5,7 @@ import com.revature.CryptoORM_P1.mapper.SQLMapper;
 import com.revature.crypto.daos.UserDAO;
 import com.revature.crypto.models.Coin;
 import com.revature.crypto.models.User;
+import com.revature.crypto.services.UserService;
 
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -12,6 +13,8 @@ import java.util.Properties;
 
 public class OrmDriver {
     public static void main(String[] args) {
+
+
         ObjectMapper objectMapper = new ObjectMapper();
         Properties props = new Properties();
         try {
@@ -71,6 +74,9 @@ public class OrmDriver {
         }
 
 
+        UserService userService = new UserService(userDAO);
 
+        //userDAO.save(user);
+        User newUser = userService.authenticateUser(user);
     }
 }

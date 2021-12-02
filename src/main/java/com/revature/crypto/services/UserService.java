@@ -14,7 +14,6 @@ import com.revature.crypto.models.User;
 public class UserService {
 
     UserDAO userDAO;
-    User sessionUser;
 
     public UserService(UserDAO userDAO){
         this.userDAO = userDAO;
@@ -46,7 +45,7 @@ public class UserService {
      */
     public User authenticateUser(User sessionUser) {
 
-        if (!isUserValid(sessionUser)) {
+        if (!isUserAuthentic(sessionUser)) {
             throw new InvalidRequestException("Invalid credential values provided!");
         }
 
@@ -63,7 +62,7 @@ public class UserService {
     /**
      *validates username and password
      */
-    public boolean isUserAuthentic(){
+    public boolean isUserAuthentic(User sessionUser){
         if (sessionUser.getUsername() == null || sessionUser.getUsername().trim().equals("")) return false;
         return sessionUser.getPassword() != null && !sessionUser.getPassword().trim().equals("");
     }
