@@ -18,7 +18,7 @@ public class RegistrationServlet extends HttpServlet {
     private final UserService userService;
     private final ObjectMapper mapper;
 
-    public RegistrationServlet(UserService userService, ObjectMapper mapper, ) {
+    public RegistrationServlet(UserService userService, ObjectMapper mapper) {
         this.userService = userService;
         this.mapper = mapper;
     }
