@@ -6,5 +6,9 @@
 
     <display-name>CryptoWeb</display-name>
 
+    <listener>
+        <listener-class>com.revature.crypto.web.util.ContextLoaderListener</listener-class>
+    </listener>
+
 
 </web-app>
