@@ -11,8 +11,8 @@ public class CoinDAO implements CrudDAO<User>{
     }
 
     @Override
-    public User save(User newObj) {
-        return null;
+    public boolean save(User newObj) {
+        return false;
     }
 
     @Override
