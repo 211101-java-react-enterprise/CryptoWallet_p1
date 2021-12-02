@@ -31,10 +31,10 @@ public class ContextLoaderListener implements ServletContextListener {
         ObjectMapper objectMapper = new ObjectMapper();
 
         UserDAO userDAO = new UserDAO();
-        UserService userService = new UserService();
+        UserService userService = new UserService(userDAO);
 
         CoinDAO coinDAO = new CoinDAO();
-        CoinService coinService = new CoinService();
+        CoinService coinService = new CoinService(coinDAO);
 
 
     }

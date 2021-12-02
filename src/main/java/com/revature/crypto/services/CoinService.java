@@ -1,5 +1,6 @@
 package com.revature.crypto.services;
 
+import com.revature.crypto.daos.CoinDAO;
 import com.revature.crypto.models.Coin;
 
 /**
@@ -12,6 +13,10 @@ import com.revature.crypto.models.Coin;
  *      valid by coinbase API
  */
 public class CoinService {
+
+    public CoinService(CoinDAO coinDAO) {
+
+    }
 
     /**
      *      CoinAmountService#isCoinAmountValid is used to check
