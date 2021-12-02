@@ -21,14 +21,15 @@ public class OrmDriver {
         SQLMapper.setProperties(props);
         SQLMapper mapper = SQLMapper.getInstance();
         UserDAO userDAO = new UserDAO();
-        String id = "5256d1e5-3393-4640-8b9b-44f607a2ec84";
-        String username= "namebozies";
+        String id = "5256d1e5-3393-4640-8b9b-44f607a2ec8433333335512";
+        String username= "nameboziessszw";
         String password = "password3";
         String firstname = "Name";
         String lastname = "Johnson";
         double amount = 34.3;
         User user = new User(id, username, password, firstname, lastname, amount);
         Coin coin = new Coin("BTC-USD", 1, "UUID3");
+
 
 //        int rowsInserted = mapper.insert(user);
 //
@@ -47,9 +48,10 @@ public class OrmDriver {
 //            System.out.println();
 //        }
 
-        User user1 = userDAO.findById(user.getUserId());
-        System.out.println("user1 username: "+user1.getUsername());
-
+        //User user1 = userDAO.findById(user.getUserId());
+        //System.out.println("user1 username: "+user1.getUsername());
+        System.out.println(userDAO.save(user));
+        //System.out.println(userDAO.removeById(user.getUserId()));
         //mapper.update(user, "user_uuid");
         //mapper.delete(user, "user_uuid");
 

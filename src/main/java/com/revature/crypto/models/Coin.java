@@ -5,12 +5,12 @@ This model is meant to represent the getSupportedCurrencies method
  */
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.revature.CryptoORM_P1.annotations.Column;
 import com.revature.CryptoORM_P1.annotations.Table;
 import com.revature.CryptoORM_P1.annotations.Value;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-
 @Table(tableName = "coin")
 public class Coin {//extends Object {
     @Column(columnName = "currency_pair", columnType = "v")

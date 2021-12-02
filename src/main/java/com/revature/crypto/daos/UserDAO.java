@@ -20,27 +20,25 @@ public class UserDAO implements CrudDAO<User> {
     private SQLMapper mapper;
 
     public UserDAO(){
-        Properties props = new Properties();
-        try {
-            ClassLoader loader = Thread.currentThread().getContextClassLoader();
-            props.load(loader.getResourceAsStream("db.properties"));
-            SQLMapper.setProperties(props);
-            mapper = SQLMapper.getInstance();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        Properties props = new Properties();
+//        try {
+//            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+//            props.load(loader.getResourceAsStream("db.properties"));
+//            SQLMapper.setProperties(props);
+//            mapper = SQLMapper.getInstance();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
-        //mapper = new SQLMapper(props);
+        mapper = SQLMapper.getInstance();
     }
 
     public UserDAO findUserByUsername(String username) {
-
       return null;
     }
 
     public User findUserByUsernameAndPassword(String username, String password) {
         return null;
-
     }
 
     @Override
@@ -84,7 +82,9 @@ public class UserDAO implements CrudDAO<User> {
 
     @Override
     public boolean removeById(String id) {
-        return false;
+        int status = mapper.delete(new User(id, "", "", "", "", -1), "user_uuid");
+        if(status!=-1) return true;
+        else return false;
     }
 
 }
