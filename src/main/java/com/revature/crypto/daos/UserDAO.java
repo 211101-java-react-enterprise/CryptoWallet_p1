@@ -69,7 +69,7 @@ public class UserDAO implements CrudDAO<User> {
 
     @Override
     public boolean removeById(User removedUser) {
-        int status = mapper.delete(removedUser);
+        int status = mapper.delete(removedUser, "user_uuid");
         if(status!=-1) return true;
         else return false;
     }

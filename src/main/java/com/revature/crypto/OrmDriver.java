@@ -26,7 +26,7 @@ public class OrmDriver {
         SQLMapper.setProperties(props);
         SQLMapper mapper = SQLMapper.getInstance();
         UserDAO userDAO = new UserDAO();
-        String id = "5256d1e5-3393-4640-8b9b-44f607a2ec8433333335512";
+        String id = "4d0859f7-d8ea-43df-80f8-4396b31d1c72";
         String username= "nameboziessszw";
         String password = "password3";
         String firstname = "Name";
@@ -66,17 +66,19 @@ public class OrmDriver {
 //        System.out.println(mapper.joinSelect(user, Coin.class, "user_uuid", "user_uuid", "user_uuid", "user_uuid"));
 
 
-        try {
-            User newUser = objectMapper.readValue("{\"username\":\"myUsername\", \"password\":\"myPassword\"}", User.class);
-            System.out.println(newUser.getUsername() + " "  + newUser.getPassword() + " " + newUser.getFirstName());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
+//        try {
+//            User newUser = objectMapper.readValue("{\"username\":\"myUsername\", \"password\":\"myPassword\"}", User.class);
+//            System.out.println(newUser.getUsername() + " "  + newUser.getPassword() + " " + newUser.getFirstName());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//
         UserService userService = new UserService(userDAO);
+//
+//        //userDAO.save(user);
+//        User newUser = userService.authenticateUser(user);
+        System.out.println(userService.deleteUser(user));
 
-        //userDAO.save(user);
-        User newUser = userService.authenticateUser(user);
     }
 }

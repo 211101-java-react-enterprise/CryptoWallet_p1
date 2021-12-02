@@ -6,6 +6,8 @@ import com.revature.crypto.exceptions.AuthenticationException;
 import com.revature.crypto.exceptions.InvalidRequestException;
 import com.revature.crypto.models.User;
 
+import java.util.UUID;
+
 /**
  * User Service class holds logic surrounding the validity of
  * user entered information and ensures database integrity.
@@ -20,6 +22,32 @@ public class UserService {
     }
 
     public boolean registerNewUser(User newUser) {
+        if (!isUserValid(newUser)) {
+            throw new InvalidRequestException("Invalid user data provided!");
+        }
+
+        if (userDAO.findUserByUsername(newUser) != null) {
+            throw new InvalidRequestException("Username is already taken!");
+        }
+
+        //give User UUID
+        newUser.setUserId(UUID.randomUUID().toString());
+
+        if(!userDAO.save(newUser)) {
+            throw new InvalidRequestException("The user could not be persisted to database for some reason");
+        }
+        return true;
+    }
+
+    public boolean deleteUser(User deleteUser) {
+        try {
+            if (userDAO.removeById(deleteUser)) {
+                return true;
+            }
+        } catch (Exception e) {
+
+        }
+
         return false;
     }
     /**
