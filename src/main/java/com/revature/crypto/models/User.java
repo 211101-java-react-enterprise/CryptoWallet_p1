@@ -1,5 +1,7 @@
 package com.revature.crypto.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.revature.CryptoORM_P1.annotations.Column;
 import com.revature.CryptoORM_P1.annotations.Table;
 import com.revature.CryptoORM_P1.annotations.Value;
