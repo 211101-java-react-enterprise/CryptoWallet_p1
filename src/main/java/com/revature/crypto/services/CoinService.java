@@ -3,6 +3,8 @@ package com.revature.crypto.services;
 import com.revature.crypto.daos.CoinDAO;
 import com.revature.crypto.models.Coin;
 
+import java.util.List;
+
 /**
  *      CoinAmountService Class holds verification logic for user
  *
@@ -14,8 +16,10 @@ import com.revature.crypto.models.Coin;
  */
 public class CoinService {
 
-    public CoinService(CoinDAO coinDAO) {
+    private CoinDAO coinDAO;
 
+    public CoinService(CoinDAO coinDAO) {
+        this.coinDAO = coinDAO;
     }
 
     /**
@@ -30,5 +34,17 @@ public class CoinService {
      */
     public boolean isCoinAmountValid(Coin newCoin) {
         return newCoin.getAmount() > 0;
+    }
+
+    public boolean isUserIdValid(Coin coin){
+        return coin.getUser_Id() != null && !coin.getUser_Id().trim().equals("");
+    }
+    public List<Coin> getCoins(String user_uuid){
+        Coin coin = new Coin();
+        coin.setUser_Id(user_uuid);
+        if(isUserIdValid(coin)){
+            return coinDAO.getCoinsByUser(coin);
+        }
+        return null;
     }
 }

@@ -32,7 +32,7 @@ public class CoinDAO implements CrudDAO<Coin>{
 
     @Override
     public List<Coin> findAll() {
-        ResultSet rs = mapper.select(new User());
+        ResultSet rs = mapper.select(new Coin());
         List<Coin> coins = new ArrayList<>();
         try{
             while(rs.next()){
@@ -49,6 +49,19 @@ public class CoinDAO implements CrudDAO<Coin>{
         int status = mapper.update(updatedObj, "user_uuid");
         if(status!=-1) return true;
         else return false;
+    }
+
+    public List<Coin> getCoinsByUser(Coin coin){
+        ResultSet rs = mapper.select(coin, "user_uuid");
+        List<Coin> coins = new ArrayList<>();
+        try{
+            while(rs.next()){
+                coins.add(createCoin(rs));
+            }
+        } catch(Exception e){
+            throw new InvalidRequestException("Failed to retrieve list of users");
+        }
+        return null;
     }
 
 

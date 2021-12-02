@@ -22,7 +22,7 @@ public class Coin {//extends Object {
 
 
     //constructors
-    Coin(String currencyPair, double amount){//called when user updates existing coin
+    public Coin(String currencyPair, double amount){//called when user updates existing coin
         this.currencyPair = currencyPair;
         this.amount = amount;
     }
@@ -30,6 +30,9 @@ public class Coin {//extends Object {
         this.currencyPair = currencyPair;
         this.amount = amount;
         this.user_Id = user_Id;
+    }
+    public Coin(){
+
     }
 
     @Value(correspondingColumn = "user_uuid")
