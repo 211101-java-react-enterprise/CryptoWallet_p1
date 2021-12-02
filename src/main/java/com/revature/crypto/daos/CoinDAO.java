@@ -1,32 +1,34 @@
 package com.revature.crypto.daos;
 
-import com.revature.crypto.models.User;
+import com.revature.crypto.models.Coin;
 
 import java.util.List;
 
-public class CoinDAO implements CrudDAO<User>{
+public class CoinDAO implements CrudDAO<Coin>{
+
     @Override
-    public User findById(String id) {
+    public Coin findById(Coin newObj) {
         return null;
     }
 
     @Override
-    public boolean save(User newObj) {
+    public boolean save(Coin newObj) {
         return false;
     }
 
     @Override
-    public List<User> findAll() {
+    public List<Coin> findAll() {
         return null;
     }
 
     @Override
-    public boolean update(User updatedObj) {
+    public boolean update(Coin updatedObj) {
         return false;
     }
 
+
     @Override
-    public boolean removeById(String id) {
+    public boolean removeById(Coin coin) {
         return false;
     }
 }

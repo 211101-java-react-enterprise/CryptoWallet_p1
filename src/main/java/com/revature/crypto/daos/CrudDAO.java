@@ -7,6 +7,6 @@ public interface CrudDAO<T> {
     boolean save(T newObj);
     List<T> findAll();
     boolean update(T updatedObj);
-    boolean removeById(String id);
+    boolean removeById(T removedObj);
 
 }
