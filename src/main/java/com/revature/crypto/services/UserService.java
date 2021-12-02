@@ -33,22 +33,24 @@ public class UserService {
      *                            to the database and false is a user that
      *                            should not be persisted to database
      */
-
-    public boolean isUserValid(User user) {
-        if (user == null) return false;
-        if (user.getFirstName() == null || user.getFirstName().trim().equals("")) return false;
-        if (user.getLastName() == null || user.getLastName().trim().equals("")) return false;
-        if (user.getUsername() == null || user.getUsername().trim().equals("")) return false;
-        return user.getPassword() != null && !user.getPassword().trim().equals("");
+    public boolean isUserValid(User sessionUser) {
+        if (sessionUser == null) return false;
+        if (sessionUser.getFirstName() == null || sessionUser.getFirstName().trim().equals("")) return false;
+        if (sessionUser.getLastName() == null || sessionUser.getLastName().trim().equals("")) return false;
+        if (sessionUser.getUsername() == null || sessionUser.getUsername().trim().equals("")) return false;
+        return sessionUser.getPassword() != null && !sessionUser.getPassword().trim().equals("");
     }
 
-    public User authenticateUser(String username, String password) {
+    /**
+     * calls methods important to authenticating the integrity of the data and then persists
+     */
+    public User authenticateUser(User sessionUser) {
 
-        if (username == null || username.trim().equals("") || password == null || password.trim().equals("")) {
+        if (!isUserValid(sessionUser)) {
             throw new InvalidRequestException("Invalid credential values provided!");
         }
 
-        User authenticatedUser = userDAO.findUserByUsernameAndPassword(username, password);
+        User authenticatedUser = userDAO.findUserByUsernameAndPassword(sessionUser);
 
         if (authenticatedUser == null) {
             throw new AuthenticationException();
@@ -56,6 +58,14 @@ public class UserService {
 
         return authenticatedUser;
 
+    }
+
+    /**
+     *validates username and password
+     */
+    public boolean isUserAuthentic(){
+        if (sessionUser.getUsername() == null || sessionUser.getUsername().trim().equals("")) return false;
+        return sessionUser.getPassword() != null && !sessionUser.getPassword().trim().equals("");
     }
 
 
