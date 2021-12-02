@@ -1,5 +1,6 @@
 package com.revature.crypto;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.CryptoORM_P1.mapper.SQLMapper;
 import com.revature.crypto.daos.UserDAO;
 import com.revature.crypto.models.Coin;
@@ -11,6 +12,7 @@ import java.util.Properties;
 
 public class OrmDriver {
     public static void main(String[] args) {
+        ObjectMapper objectMapper = new ObjectMapper();
         Properties props = new Properties();
         try {
             ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -50,7 +52,7 @@ public class OrmDriver {
 
         //User user1 = userDAO.findById(user.getUserId());
         //System.out.println("user1 username: "+user1.getUsername());
-        System.out.println(userDAO.save(user));
+        //System.out.println(userDAO.save(user));
         //System.out.println(userDAO.removeById(user.getUserId()));
         //mapper.update(user, "user_uuid");
         //mapper.delete(user, "user_uuid");
@@ -59,6 +61,16 @@ public class OrmDriver {
         //mapper.join
 //        mapper.insert(coin);
 //        System.out.println(mapper.joinSelect(user, Coin.class, "user_uuid", "user_uuid", "user_uuid", "user_uuid"));
+
+
+        try {
+            User newUser = objectMapper.readValue("{\"username\":\"myUsername\", \"password\":\"myPassword\"}", User.class);
+            System.out.println(newUser.getUsername() + " "  + newUser.getPassword() + " " + newUser.getFirstName());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
 
     }
 }
