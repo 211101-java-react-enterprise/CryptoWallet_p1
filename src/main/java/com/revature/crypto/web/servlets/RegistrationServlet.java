@@ -29,6 +29,7 @@ public class RegistrationServlet extends HttpServlet {
 
         try {
             User newUser = objectMapper.readValue(req.getInputStream(), User.class);
+            newUser.setAmount_invested(10000);
 
             if (userService.registerNewUser(newUser)) {
                 resp.setStatus(201);

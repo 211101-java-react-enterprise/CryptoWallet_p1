@@ -13,6 +13,7 @@ import com.revature.CryptoORM_P1.annotations.Value;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Table(tableName = "coin")
 public class Coin {//extends Object {
+    @JsonProperty("id")
     @Column(columnName = "currency_pair", columnType = "v")
     private String currencyPair;//pk (composite)
     @Column(columnName = "amount", columnType = "n")

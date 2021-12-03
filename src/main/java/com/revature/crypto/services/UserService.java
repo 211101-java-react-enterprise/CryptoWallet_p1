@@ -95,5 +95,9 @@ public class UserService {
         return sessionUser.getPassword() != null && !sessionUser.getPassword().trim().equals("");
     }
 
+    public boolean updateUser(User updatedUser) {
+        return userDAO.update(updatedUser);
+    }
+
 
 }

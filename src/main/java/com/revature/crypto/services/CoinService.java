@@ -2,8 +2,11 @@ package com.revature.crypto.services;
 
 import com.revature.crypto.daos.CoinDAO;
 import com.revature.crypto.daos.CoinbaseDAO;
+import com.revature.crypto.exceptions.InvalidRequestException;
 import com.revature.crypto.models.Coin;
+import com.revature.crypto.models.User;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -56,6 +59,52 @@ public class CoinService {
     }
 
     public double getTotalWalletValue(List<Coin> coins){
-        return 0.0;
+        double result = 0;
+
+        for (Coin coin : coins) {
+            result += coinbaseDAO.valueOf(coin.getCurrencyPair());
+        }
+        return result;
+    }
+
+    public boolean validateCoinPair(String pair) {
+        for (Coin coin : currencyPairs) {
+            if (coin.getCurrencyPair().equals(pair)) return true;
+        }
+        return false;
+    }
+
+    public boolean buyCoin(Coin coin, User user) {
+        if (!validateCoinPair(coin.getCurrencyPair())) {
+            throw new InvalidRequestException("Invalid Currency pair given!");
+        }
+
+        // check if user has enough cash to buy
+        double purchaseAmount = coin.getAmount() * coinbaseDAO.valueOf(coin.getCurrencyPair());
+
+        if (user.getAmount_invested() > purchaseAmount) {
+            user.setAmount_invested(user.getAmount_invested() - purchaseAmount);
+            // check if user already has some of coin
+            try {
+                double coinAmount = coinDAO.getCoinAmount(coin);
+                if (coinAmount != -1) {
+                    // if so update current value
+                    coin.setAmount(coin.getAmount() + coinAmount);
+                    if(coinDAO.update(coin)) return true;
+                } else {
+                    // if not create new entry in coin table
+                    if (coinDAO.save(coin)) return true;
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        }
+        return false;
+    }
+
+    public boolean sellCoin(Coin coin) {
+
+        return false;
     }
 }
