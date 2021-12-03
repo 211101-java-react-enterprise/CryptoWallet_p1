@@ -62,7 +62,7 @@ public class CoinService {
         double result = 0;
 
         for (Coin coin : coins) {
-            result += coinbaseDAO.valueOf(coin.getCurrencyPair());
+            result += coinbaseDAO.valueOf(coin.getCurrencyPair()) * coin.getAmount();
         }
         return result;
     }
