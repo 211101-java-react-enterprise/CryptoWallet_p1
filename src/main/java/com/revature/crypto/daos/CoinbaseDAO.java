@@ -25,10 +25,10 @@ public class CoinbaseDAO {
     //returns a USD value given a supported coin
     public double valueOf(String coin) {
         try {
-            String json = getBuyPrice_V2(coin);
+            String json = getProductTicker_E(coin);
             //System.out.println(json);
             JsonNode jsonNode = mapper.readTree(json);
-            double value = Double.parseDouble(jsonNode.get("data").get("amount").textValue());
+            double value = Double.parseDouble(jsonNode.get("price").textValue());
             return value;
         } catch (Exception e) {
             //System.out.println("Trouble parsing the data");
@@ -105,6 +105,8 @@ public class CoinbaseDAO {
     public String getProductStats_E() {
         return getData("https://api.exchange.coinbase.com/products/BTC-USD/stats");
     }
+
+    public String getProductTicker_E(String currencyPair){return getData("https://api.exchange.coinbase.com/products/"+currencyPair+"/ticker");}
 
 
     /*---------------------------------------------------------------------------------------------------------------
