@@ -68,8 +68,6 @@ public class CoinService {
     }
 
     public boolean validateCoinPair(String pair) {
-        System.out.println("\n\n\n" + pair + "\n\n\n");
-       // return currencyPairs.stream().filter(p -> p.getCurrencyPair().equals(pair)).findFirst() != null;
         for (Coin coin : currencyPairs) {
             if (coin.getCurrencyPair().equals(pair)) return true;
         }

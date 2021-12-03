@@ -38,7 +38,7 @@ public class CoinDAO implements CrudDAO<Coin>{
 
     @Override
     public boolean update(Coin updatedObj) {
-        int status = mapper.update(updatedObj, "user_uuid");
+        int status = mapper.update(updatedObj, "user_uuid", "currency_pair");
         if(status!=-1) return true;
         else return false;
     }
