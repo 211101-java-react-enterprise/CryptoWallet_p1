@@ -9,13 +9,12 @@ import com.revature.crypto.services.CoinService;
 import com.revature.crypto.services.UserService;
 import com.revature.crypto.web.servlets.LoginServlet;
 import com.revature.crypto.web.servlets.RegistrationServlet;
-import com.revature.crypto.web.servlets.TradingServlet;
+import com.revature.crypto.web.servlets.BuyCoinServlet;
 import com.revature.crypto.web.servlets.ViewWalletServlet;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import javax.swing.text.View;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -46,14 +45,14 @@ public class ContextLoaderListener implements ServletContextListener {
 
         LoginServlet loginServlet = new LoginServlet(userService, objectMapper);
         RegistrationServlet registrationServlet = new RegistrationServlet(userService, objectMapper);
-        TradingServlet tradingServlet = new TradingServlet(userService, coinService, objectMapper);
+        BuyCoinServlet buyCoinServlet = new BuyCoinServlet(userService, coinService, objectMapper);
         ViewWalletServlet viewWalletServlet = new ViewWalletServlet(userService, coinService, objectMapper);
 
 
         ServletContext context = sce.getServletContext();
         context.addServlet("LoginServlet", loginServlet).addMapping("/login");
         context.addServlet("RegistrationServlet", registrationServlet).addMapping("/register");
-        context.addServlet("TradingServlet", tradingServlet).addMapping("/trade");
+        context.addServlet("TradingServlet", buyCoinServlet).addMapping("/trade");
         context.addServlet("ViewWalletServlet", viewWalletServlet).addMapping("/view");
         
 

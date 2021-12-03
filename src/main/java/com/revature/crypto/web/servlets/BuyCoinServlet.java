@@ -2,6 +2,7 @@ package com.revature.crypto.web.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.crypto.exceptions.InvalidRequestException;
+import com.revature.crypto.exceptions.UnauthorizedException;
 import com.revature.crypto.models.Coin;
 import com.revature.crypto.models.User;
 import com.revature.crypto.services.CoinService;
@@ -16,13 +17,13 @@ import java.io.IOException;
 import java.io.InvalidClassException;
 import java.sql.SQLException;
 
-public class TradingServlet extends HttpServlet {
+public class BuyCoinServlet extends HttpServlet {
 
     private UserService userService;
     private CoinService coinService;
     private ObjectMapper objectMapper;
 
-    public TradingServlet(UserService userService, CoinService coinService, ObjectMapper objectMapper) {
+    public BuyCoinServlet(UserService userService, CoinService coinService, ObjectMapper objectMapper) {
         this.userService = userService;
         this.coinService = coinService;
         this.objectMapper = objectMapper;
@@ -37,7 +38,7 @@ public class TradingServlet extends HttpServlet {
         User verifiedUser = (User)session.getAttribute("verifiedUser");
         transaction.setUser_Id(verifiedUser.getUserId());
 
-        if (verifiedUser == null) throw new InvalidRequestException("null user");
+        if (verifiedUser == null) throw new UnauthorizedException("Could not authenticate User credentials.");
 
         if (coinService.buyCoin(transaction, verifiedUser)) {
             if (userService.updateUser(verifiedUser)) {
