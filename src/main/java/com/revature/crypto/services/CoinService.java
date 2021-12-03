@@ -80,6 +80,9 @@ public class CoinService {
         }
 
         // check if user has enough cash to buy
+        //coinbaseDAO.getProductTicker_E("USD-BTC");
+        //double valueOf = coinbaseDAO.valueOf(coin.getCurrencyPair());
+        //System.out.println("\n\nVALUE:\n"+valueOf+"\n");
         double purchaseAmount = coin.getAmount() * coinbaseDAO.valueOf(coin.getCurrencyPair());
 
         if (user.getAmount_invested() > purchaseAmount) {

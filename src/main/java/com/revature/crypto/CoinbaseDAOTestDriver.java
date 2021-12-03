@@ -14,6 +14,14 @@ public class CoinbaseDAOTestDriver {
 
 
         CoinbaseDAO coinbaseDAO = new CoinbaseDAO();
+        System.out.println(coinbaseDAO.getProductTicker_E("BTC-USD"));
+        System.out.println(coinbaseDAO.valueOf("BTC-USD"));
+        //System.out.println();
+
+        //System.out.println(coinbaseDAO.valueOf("BTC-USD"));
+        //23145.70684316 = $1
+        //double d = 0.00000037878787865564534345576764556787;
+        //System.out.println("\n"+d*999.3455743+"\n");
 //
 //         //Coin[] coins = coinbaseDAO.getAllCoins2();
 //         List<Coin> coins = coinbaseDAO.getAllCoins();
@@ -24,10 +32,10 @@ public class CoinbaseDAOTestDriver {
 //         double dollars = 100;
 //         double converted_amount = dollars/coti;
 //        System.out.println(converted_amount);
-
-        CoinService coinService = new CoinService(new CoinDAO(), coinbaseDAO);
-
-        coinService.buyCoin(new Coin("ETH-USD", 1, "6de2148e-5a44-49de-b1ea-928c58b12a8e"), new User("6de2148e-5a44-49de-b1ea-928c58b12a8e", "a", "a", "a", "a", 10000));
+//
+//        CoinService coinService = new CoinService(new CoinDAO(), coinbaseDAO);
+//
+//        coinService.buyCoin(new Coin("ETH-USD", 1, "6de2148e-5a44-49de-b1ea-928c58b12a8e"), new User("6de2148e-5a44-49de-b1ea-928c58b12a8e", "a", "a", "a", "a", 10000));
 
 
 
