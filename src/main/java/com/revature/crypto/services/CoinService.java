@@ -1,6 +1,7 @@
 package com.revature.crypto.services;
 
 import com.revature.crypto.daos.CoinDAO;
+import com.revature.crypto.daos.CoinbaseDAO;
 import com.revature.crypto.models.Coin;
 
 import java.util.List;
@@ -17,9 +18,15 @@ import java.util.List;
 public class CoinService {
 
     private CoinDAO coinDAO;
+    private CoinbaseDAO coinbaseDAO;
 
-    public CoinService(CoinDAO coinDAO) {
+    List<Coin> currencyPairs;
+
+    public CoinService(CoinDAO coinDAO, CoinbaseDAO coinbaseDAO) {
         this.coinDAO = coinDAO;
+        this.coinbaseDAO = coinbaseDAO;
+
+        currencyPairs = coinbaseDAO.getAllCoins();
     }
 
     /**
@@ -46,5 +53,9 @@ public class CoinService {
             return coinDAO.getCoinsByUser(coin);
         }
         return null;
+    }
+
+    public double getTotalWalletValue(List<Coin> coins){
+        return 0.0;
     }
 }

@@ -3,6 +3,7 @@ package com.revature.crypto.web.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.CryptoORM_P1.mapper.SQLMapper;
 import com.revature.crypto.daos.CoinDAO;
+import com.revature.crypto.daos.CoinbaseDAO;
 import com.revature.crypto.daos.UserDAO;
 import com.revature.crypto.services.CoinService;
 import com.revature.crypto.services.UserService;
@@ -40,7 +41,8 @@ public class ContextLoaderListener implements ServletContextListener {
         UserService userService = new UserService(userDAO);
 
         CoinDAO coinDAO = new CoinDAO();
-        CoinService coinService = new CoinService(coinDAO);
+        CoinbaseDAO coinbaseDAO = new CoinbaseDAO();
+        CoinService coinService = new CoinService(coinDAO, coinbaseDAO);
 
         LoginServlet loginServlet = new LoginServlet(userService, objectMapper);
         RegistrationServlet registrationServlet = new RegistrationServlet(userService, objectMapper);
@@ -51,8 +53,8 @@ public class ContextLoaderListener implements ServletContextListener {
         ServletContext context = sce.getServletContext();
         context.addServlet("LoginServlet", loginServlet).addMapping("/login");
         context.addServlet("RegistrationServlet", registrationServlet).addMapping("/register");
-        context.addServlet("TradingServlet", registrationServlet).addMapping("/trade");
-        context.addServlet("ViewWalletServlet", registrationServlet).addMapping("/view");
+        context.addServlet("TradingServlet", tradingServlet).addMapping("/trade");
+        context.addServlet("ViewWalletServlet", viewWalletServlet).addMapping("/view");
         
 
     }

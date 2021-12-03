@@ -1,6 +1,7 @@
 package com.revature.crypto.web.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.revature.crypto.exceptions.AuthenticationException;
 import com.revature.crypto.exceptions.InvalidRequestException;
 import com.revature.crypto.models.Coin;
@@ -33,24 +34,36 @@ public class ViewWalletServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         PrintWriter writer = resp.getWriter();
         resp.setContentType("application/json");
-//        Coin sessionCoin = objectMapper.readValue(req.getInputStream(), Coin.class);
-        HttpSession session = req.getSession();
-        Coin coin = new Coin();
+
+        HttpSession session = req.getSession(false);
 
 
-        if(session==null){
-            resp.setStatus(401);//unauthenticated client
-            throw new AuthenticationException("nobody is logged in!");
-        }
         try{
+            if(session==null){
+                throw new AuthenticationException("nobody is logged in!");
+            }
+
             User authUser = (User) session.getAttribute("verifiedUser");
-            //coin.setUser_Id(authUser.getUserId());
+
             List<Coin> coins = coinService.getCoins(authUser.getUserId());
-            String payload = objectMapper.writeValueAsString(coins);
+
+
+            String payload = objectMapper.writeValueAsString(0.0/*coinService.getTotalWalletValue(coins)*/);
+
+
+            payload += objectMapper.writeValueAsString(coins);
+
             resp.getWriter().write(payload);
             resp.setStatus(200);
+        }catch (AuthenticationException e) {
+            resp.setStatus(401);//unauthenticated client
         }catch (Exception e){
             resp.setStatus(500);
+
+            System.out.println("\n\n");
+            e.printStackTrace();
+            System.out.println("\n\n");
+
             throw new InvalidRequestException("bad request");
         }
     }

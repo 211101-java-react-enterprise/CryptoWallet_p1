@@ -107,4 +107,16 @@ public class User {
     public void setAmount_invested(double amount_invested) {
         this.amount_invested = amount_invested;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId='" + userId + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", amount_invested=" + amount_invested +
+                '}';
+    }
 }

@@ -38,10 +38,10 @@ public class CoinDAO implements CrudDAO<Coin>{
             while(rs.next()){
                 coins.add(createCoin(rs));
             }
+            return coins;
         } catch(Exception e){
             throw new InvalidRequestException("Failed to retrieve list of users");
         }
-        return null;
     }
 
     @Override
@@ -58,10 +58,10 @@ public class CoinDAO implements CrudDAO<Coin>{
             while(rs.next()){
                 coins.add(createCoin(rs));
             }
+            return coins;
         } catch(Exception e){
             throw new InvalidRequestException("Failed to retrieve list of users");
         }
-        return null;
     }
 
 
@@ -74,14 +74,11 @@ public class CoinDAO implements CrudDAO<Coin>{
 
     private Coin createCoin (ResultSet rs){
         try{
-            if(rs.next()){
-                return new Coin(rs.getString("currency_pair"),
-                        rs.getDouble("amount"),
-                        rs.getString("user_uuid"));
-            }
+            return new Coin(rs.getString("currency_pair"),
+                    rs.getDouble("amount"),
+                    rs.getString("user_uuid"));
         }catch(Exception e) {
             throw new InvalidRequestException("No matching Id found in database");
         }
-        return null;
     }
 }
