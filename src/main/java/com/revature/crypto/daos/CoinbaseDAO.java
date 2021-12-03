@@ -47,7 +47,7 @@ public class CoinbaseDAO {
             List<Coin> coins = mapper.
                     readValue(json, typeFactory.
                             constructCollectionType(List.class, Coin.class));
-            coins = coins.stream().filter(c -> c.getUser_Id().endsWith("USD")).collect(Collectors.toList());
+            coins = coins.stream().filter(c -> c.getCurrencyPair().endsWith("USD")).collect(Collectors.toList());
 //            for(Coin coin: coins){
 //                String cut_id = coin.getId().substring(coin.getId().length()-3);//checks if currency paired with USD
 //                if(!cut_id.equals("USD")){

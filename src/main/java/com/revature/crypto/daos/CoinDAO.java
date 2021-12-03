@@ -6,6 +6,7 @@ import com.revature.crypto.models.Coin;
 import com.revature.crypto.models.User;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,16 +33,7 @@ public class CoinDAO implements CrudDAO<Coin>{
 
     @Override
     public List<Coin> findAll() {
-        ResultSet rs = mapper.select(new Coin());
-        List<Coin> coins = new ArrayList<>();
-        try{
-            while(rs.next()){
-                coins.add(createCoin(rs));
-            }
-            return coins;
-        } catch(Exception e){
-            throw new InvalidRequestException("Failed to retrieve list of users");
-        }
+        return createCoinList(mapper.select(new Coin()));
     }
 
     @Override
@@ -52,16 +44,7 @@ public class CoinDAO implements CrudDAO<Coin>{
     }
 
     public List<Coin> getCoinsByUser(Coin coin){
-        ResultSet rs = mapper.select(coin, "user_uuid");
-        List<Coin> coins = new ArrayList<>();
-        try{
-            while(rs.next()){
-                coins.add(createCoin(rs));
-            }
-            return coins;
-        } catch(Exception e){
-            throw new InvalidRequestException("Failed to retrieve list of users");
-        }
+        return createCoinList(mapper.select(coin, "user_uuid"));
     }
 
 
@@ -79,6 +62,29 @@ public class CoinDAO implements CrudDAO<Coin>{
                     rs.getString("user_uuid"));
         }catch(Exception e) {
             throw new InvalidRequestException("No matching Id found in database");
+        }
+    }
+
+    public double getCoinAmount(Coin coin) throws SQLException {
+        ResultSet rs = mapper.select(coin, "user_uuid", "currency_pair");
+        try {
+            if(rs.next()) return rs.getDouble("amount");
+            return -1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException("Failed to create resultSet");
+        }
+    }
+
+    private List<Coin> createCoinList(ResultSet rs) {
+        List<Coin> coins = new ArrayList<>();
+        try{
+            while(rs.next()){
+                coins.add(createCoin(rs));
+            }
+            return coins;
+        } catch(Exception e){
+            throw new InvalidRequestException("Failed to retrieve list of users");
         }
     }
 }

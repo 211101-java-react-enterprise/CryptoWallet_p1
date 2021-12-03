@@ -1,6 +1,7 @@
 package com.revature.crypto.web.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.revature.crypto.exceptions.AuthenticationException;
 import com.revature.crypto.exceptions.InvalidRequestException;
@@ -46,12 +47,18 @@ public class ViewWalletServlet extends HttpServlet {
             User authUser = (User) session.getAttribute("verifiedUser");
 
             List<Coin> coins = coinService.getCoins(authUser.getUserId());
+            double walletValue = coinService.getTotalWalletValue(coins);
 
+            ObjectNode json = objectMapper.createObjectNode();
+            json.put("Wallet Value:", String.format("$%.2f", walletValue));
 
-            String payload = objectMapper.writeValueAsString(0.0/*coinService.getTotalWalletValue(coins)*/);
+            ObjectNode coinNode = objectMapper.createObjectNode();
+            for (Coin coin : coins) {
+                coinNode.put(coin.getCurrencyPair(), coin.getAmount());
+            }
+            json.set("Coins:", coinNode);
 
-
-            payload += objectMapper.writeValueAsString(coins);
+            String payload = objectMapper.writeValueAsString(json);
 
             resp.getWriter().write(payload);
             resp.setStatus(200);

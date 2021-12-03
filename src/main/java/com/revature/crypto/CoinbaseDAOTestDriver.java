@@ -1,7 +1,10 @@
 package com.revature.crypto;
 
+import com.revature.crypto.daos.CoinDAO;
 import com.revature.crypto.daos.CoinbaseDAO;
 import com.revature.crypto.models.Coin;
+import com.revature.crypto.models.User;
+import com.revature.crypto.services.CoinService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,18 +13,23 @@ public class CoinbaseDAOTestDriver {
     public static void main(String[] args) {
 
 
-
         CoinbaseDAO coinbaseDAO = new CoinbaseDAO();
+//
+//         //Coin[] coins = coinbaseDAO.getAllCoins2();
+//         List<Coin> coins = coinbaseDAO.getAllCoins();
+//
+//         double failCount = 0;
+//         double successCount = 0;
+//         double coti = (coinbaseDAO.valueOf("COTI-USD"));
+//         double dollars = 100;
+//         double converted_amount = dollars/coti;
+//        System.out.println(converted_amount);
 
-         //Coin[] coins = coinbaseDAO.getAllCoins2();
-         List<Coin> coins = coinbaseDAO.getAllCoins();
+        CoinService coinService = new CoinService(new CoinDAO(), coinbaseDAO);
 
-         double failCount = 0;
-         double successCount = 0;
-         double coti = (coinbaseDAO.valueOf("COTI-USD"));
-         double dollars = 100;
-         double converted_amount = dollars/coti;
-        System.out.println(converted_amount);
+        coinService.buyCoin(new Coin("ETH-USD", 1, "6de2148e-5a44-49de-b1ea-928c58b12a8e"), new User("6de2148e-5a44-49de-b1ea-928c58b12a8e", "a", "a", "a", "a", 10000));
+
+
 
 //         for(Coin coin : coins){
 //             //if(coin.getId()== "BTC-EUR") System.out.println("BTC-USD");
