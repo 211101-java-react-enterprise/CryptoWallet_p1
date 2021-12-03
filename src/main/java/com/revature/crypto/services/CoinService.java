@@ -79,10 +79,6 @@ public class CoinService {
             throw new InvalidRequestException("Invalid Currency pair given!");
         }
 
-        // check if user has enough cash to buy
-        //coinbaseDAO.getProductTicker_E("USD-BTC");
-        //double valueOf = coinbaseDAO.valueOf(coin.getCurrencyPair());
-        //System.out.println("\n\nVALUE:\n"+valueOf+"\n");
         double purchaseAmount = coin.getAmount() * coinbaseDAO.valueOf(coin.getCurrencyPair());
 
         if (user.getAmount_invested() > purchaseAmount) {
@@ -106,8 +102,24 @@ public class CoinService {
         return false;
     }
 
-    public boolean sellCoin(Coin coin) {
+    /**
+     * takes in the coin the user wants to sell and the amount they want to sell
+     */
+    public boolean sellCoin(Coin coin, User user) {
+        //check if user has coin they want to sell
+        Coin ownedCoin = coinDAO.hasCoin(coin);
+        double coinAmount = coin.getAmount()*coinbaseDAO.valueOf(coin.getCurrencyPair());
+        if(!ownedCoin.equals(null)) {//user must have the coin
+            if(ownedCoin.getAmount() < coin.getAmount()){//user must have enough of the coin
+                user.setAmount_invested(user.getAmount_invested() +coinAmount);
+                        // if so update current value
+                        coin.setAmount(coin.getAmount() - coinAmount);
+                        if(coin.getAmount() ==0) coinDAO.removeById(coin);
+                        else coinDAO.update(coin);
+                        return true;
 
-        return false;
+            } else throw new InvalidRequestException("Not enough of the coin in your wallet");
+        } else throw new InvalidRequestException("You don't own that coin");
+        //check if amount is valid
     }
 }

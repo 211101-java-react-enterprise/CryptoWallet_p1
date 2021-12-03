@@ -76,6 +76,20 @@ public class CoinDAO implements CrudDAO<Coin>{
         }
     }
 
+    /**
+     * does the user have a given coin
+     * return null if no
+     */
+    public Coin hasCoin(Coin coin){
+        ResultSet rs = mapper.select(coin, "user_uuid", "currency_pair");
+        try {
+            if(!rs.next()) return null;
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        return createCoin(rs);
+    }
+
     private List<Coin> createCoinList(ResultSet rs) {
         List<Coin> coins = new ArrayList<>();
         try{
