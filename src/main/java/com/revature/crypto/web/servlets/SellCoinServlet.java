@@ -8,7 +8,6 @@ import com.revature.crypto.models.User;
 import com.revature.crypto.services.CoinService;
 import com.revature.crypto.services.UserService;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
