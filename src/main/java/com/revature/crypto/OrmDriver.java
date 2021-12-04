@@ -9,10 +9,11 @@ import com.revature.crypto.services.UserService;
 
 import java.io.IOException;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Properties;
 
 public class OrmDriver {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
 
 
         ObjectMapper objectMapper = new ObjectMapper();

@@ -1,11 +1,14 @@
 package com.revature.crypto.services;
 
+import com.revature.CryptoORM_P1.exception.InvalidClassException;
+import com.revature.CryptoORM_P1.exception.MethodInvocationException;
 import com.revature.CryptoORM_P1.mapper.SQLMapper;
 import com.revature.crypto.daos.UserDAO;
 import com.revature.crypto.exceptions.AuthenticationException;
 import com.revature.crypto.exceptions.InvalidRequestException;
 import com.revature.crypto.models.User;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
 /**
@@ -21,12 +24,12 @@ public class UserService {
         this.userDAO = userDAO;
     }
 
-    public boolean registerNewUser(User newUser) {
+    public boolean registerNewUser(User newUser) throws InvalidClassException, MethodInvocationException, SQLException, InvalidRequestException  {
         if (!isUserValid(newUser)) {
             throw new InvalidRequestException("Invalid user data provided!");
         }
 
-        if (userDAO.findUserByUsername(newUser) != null) {
+        if (userDAO.findUserByUsername(newUser) != null)  {
             throw new InvalidRequestException("Username is already taken!");
         }
 
@@ -39,15 +42,10 @@ public class UserService {
         return true;
     }
 
-    public boolean deleteUser(User deleteUser) {
-        try {
-            if (userDAO.removeById(deleteUser)) {
-                return true;
-            }
-        } catch (Exception e) {
-
+    public boolean deleteUser(User deleteUser) throws InvalidClassException, MethodInvocationException, SQLException {
+        if (userDAO.removeById(deleteUser)) {
+            return true;
         }
-
         return false;
     }
     /**
@@ -71,7 +69,7 @@ public class UserService {
     /**
      * calls methods important to authenticating the integrity of the data and then persists
      */
-    public User authenticateUser(User sessionUser) {
+    public User authenticateUser(User sessionUser) throws InvalidClassException, MethodInvocationException, SQLException, InvalidRequestException, AuthenticationException {
 
         if (!isUserAuthentic(sessionUser)) {
             throw new InvalidRequestException("Invalid credential values provided!");
@@ -95,7 +93,7 @@ public class UserService {
         return sessionUser.getPassword() != null && !sessionUser.getPassword().trim().equals("");
     }
 
-    public boolean updateUser(User updatedUser) {
+    public boolean updateUser(User updatedUser) throws InvalidClassException, MethodInvocationException, SQLException {
         return userDAO.update(updatedUser);
     }
 

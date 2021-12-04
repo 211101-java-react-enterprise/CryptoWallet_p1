@@ -1,6 +1,8 @@
 package com.revature.crypto.web.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.revature.CryptoORM_P1.exception.InvalidClassException;
+import com.revature.CryptoORM_P1.exception.MethodInvocationException;
 import com.revature.crypto.exceptions.InvalidRequestException;
 import com.revature.crypto.exceptions.UnauthorizedException;
 import com.revature.crypto.models.Coin;
@@ -14,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.io.InvalidClassException;
 import java.sql.SQLException;
 
 public class BuyCoinServlet extends HttpServlet {
@@ -30,28 +31,34 @@ public class BuyCoinServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
+        try {
+            Coin transaction = objectMapper.readValue(req.getInputStream(), Coin.class);
 
-        Coin transaction = objectMapper.readValue(req.getInputStream(), Coin.class);
+            HttpSession session = req.getSession(false);
 
-        HttpSession session = req.getSession();
-        User verifiedUser = (User)session.getAttribute("verifiedUser");
-        transaction.setUser_Id(verifiedUser.getUserId());
+            if (session == null) throw new UnauthorizedException("Could not authenticate User credentials.");
 
-        if (verifiedUser == null) throw new UnauthorizedException("Could not authenticate User credentials.");
+            User verifiedUser = (User) session.getAttribute("verifiedUser");
+            transaction.setUser_Id(verifiedUser.getUserId());
 
-        if (coinService.buyCoin(transaction, verifiedUser)) {
-            if (userService.updateUser(verifiedUser)) {
-                resp.setStatus(204);
+            if (coinService.buyCoin(transaction, verifiedUser)) {
 
-            } else {
-                resp.setStatus(418);
-                throw new InvalidRequestException("Failed to update user, enjoy your free money!");
-            }
+                if (userService.updateUser(verifiedUser)) {
+                    resp.setStatus(204);
+                } else {throw new InvalidRequestException("Failed to update user, enjoy your free money!");}
 
-        } else {
+            } else {throw new InvalidRequestException("Could not persist coin purchase to database");}
+
+        } catch (InvalidClassException | MethodInvocationException e) {
+            resp.setStatus(500);
+            e.printStackTrace();
+        } catch (InvalidRequestException | IOException | SQLException e) {
             resp.setStatus(400);
-            throw new InvalidRequestException("Could not persist coin purchase to database");
+            e.printStackTrace();
+        } catch (UnauthorizedException e) {
+            resp.setStatus(401);
+            e.printStackTrace();
         }
     }
 }

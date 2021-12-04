@@ -1,7 +1,5 @@
 package com.revature.crypto.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.revature.CryptoORM_P1.annotations.Column;
 import com.revature.CryptoORM_P1.annotations.Table;
 import com.revature.CryptoORM_P1.annotations.Value;
@@ -29,7 +27,7 @@ public class User {
     @Column(columnName = "last_name", columnType = "v")
     private String lastName;
     @Column(columnName = "dollars_invested", columnType = "n")
-    private double amount_invested;
+    private double usdBalance;
 
     //000000000000000000000000000000000000000000000000000000000000000000000000000000000
 
@@ -41,13 +39,13 @@ public class User {
 
     }
 
-    public User(String userId, String username, String password, String firstName, String lastName, double amount_invested) {
+    public User(String userId, String username, String password, String firstName, String lastName, double usdBalance) {
         this.userId = userId;
         this.username = username;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.amount_invested = amount_invested;
+        this.usdBalance = usdBalance;
     }
 
     public User(){
@@ -100,12 +98,12 @@ public class User {
     }
 
     @Value(correspondingColumn = "dollars_invested")
-    public double getAmount_invested() {
-        return amount_invested;
+    public double getUsdBalance() {
+        return usdBalance;
     }
 
-    public void setAmount_invested(double amount_invested) {
-        this.amount_invested = amount_invested;
+    public void setUsdBalance(double usdBalance) {
+        this.usdBalance = usdBalance;
     }
 
     @Override
@@ -116,7 +114,7 @@ public class User {
                 ", password='" + password + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
-                ", amount_invested=" + amount_invested +
+                ", usdBalance=" + usdBalance +
                 '}';
     }
 }
