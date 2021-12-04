@@ -5,6 +5,7 @@ import com.revature.CryptoORM_P1.mapper.SQLMapper;
 import com.revature.crypto.daos.CoinDAO;
 import com.revature.crypto.daos.CoinbaseDAO;
 import com.revature.crypto.daos.UserDAO;
+import com.revature.crypto.exceptions.InvalidRequestException;
 import com.revature.crypto.services.CoinService;
 import com.revature.crypto.services.UserService;
 import com.revature.crypto.web.servlets.*;
@@ -30,8 +31,8 @@ public class ContextLoaderListener implements ServletContextListener {
 
             SQLMapper.setProperties(props);
 
-        } catch (IOException | SQLException e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            throw new InvalidRequestException("Could not load properties file");
         }
 
         ObjectMapper objectMapper = new ObjectMapper();
