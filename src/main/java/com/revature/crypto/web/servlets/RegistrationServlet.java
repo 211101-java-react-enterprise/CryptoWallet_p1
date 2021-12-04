@@ -1,6 +1,10 @@
 package com.revature.crypto.web.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.revature.CryptoORM_P1.exception.InvalidClassException;
+import com.revature.CryptoORM_P1.exception.MethodInvocationException;
+import com.revature.crypto.exceptions.AuthenticationException;
+import com.revature.crypto.exceptions.InvalidRequestException;
 import com.revature.crypto.models.User;
 import com.revature.crypto.services.UserService;
 
@@ -8,8 +12,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 
 public class RegistrationServlet extends HttpServlet {
 
@@ -22,14 +28,13 @@ public class RegistrationServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        PrintWriter respWriter = resp.getWriter();
-        resp.setContentType("application/json");
-
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
         try {
+            PrintWriter respWriter = resp.getWriter();
+            resp.setContentType("application/json");
+
             User newUser = objectMapper.readValue(req.getInputStream(), User.class);
-            newUser.setAmount_invested(10000);
+            newUser.setUsdBalance(10000);
 
             if (userService.registerNewUser(newUser)) {
                 resp.setStatus(201);
@@ -38,22 +43,26 @@ public class RegistrationServlet extends HttpServlet {
                 resp.setStatus(500);
             }
 
-        } catch (Exception e) {
-            // bad request from user
+        } catch (MethodInvocationException | InvalidClassException e) {
+            resp.setStatus(500);
+            e.printStackTrace();
+        } catch (IOException | SQLException | InvalidRequestException e) {
             resp.setStatus(400);
             e.printStackTrace();
-
         }
     }
 
     @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        PrintWriter respWriter = resp.getWriter();
-        resp.setContentType("application/json");
-
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
         try {
-            User deleteUser = (User) req.getSession(false).getAttribute("verifiedUser");
+            PrintWriter respWriter = resp.getWriter();
+            resp.setContentType("application/json");
+
+            HttpSession session = req.getSession(false);
+
+            if (session == null) throw new AuthenticationException("No valid session");
+
+            User deleteUser = (User) session.getAttribute("verifiedUser");
 
             if (userService.deleteUser(deleteUser)) {
                 req.getSession(false).invalidate();
@@ -61,8 +70,15 @@ public class RegistrationServlet extends HttpServlet {
             } else {
                 resp.setStatus(500);
             }
-        } catch (Exception e) {
+        } catch (MethodInvocationException | InvalidClassException e) {
+            e.printStackTrace();
+            resp.setStatus(500);
+        } catch (IOException | SQLException e) {
             resp.setStatus(400);
+            e.printStackTrace();
+        } catch (AuthenticationException e) {
+            e.printStackTrace();
+            resp.setStatus(401);
         }
     }
 }

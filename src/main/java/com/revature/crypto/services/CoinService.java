@@ -1,11 +1,15 @@
 package com.revature.crypto.services;
 
+import com.revature.CryptoORM_P1.exception.InvalidClassException;
+import com.revature.CryptoORM_P1.exception.MethodInvocationException;
 import com.revature.crypto.daos.CoinDAO;
 import com.revature.crypto.daos.CoinbaseDAO;
 import com.revature.crypto.exceptions.InvalidRequestException;
+import com.revature.crypto.exceptions.JsonParsingException;
 import com.revature.crypto.models.Coin;
 import com.revature.crypto.models.User;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -25,7 +29,7 @@ public class CoinService {
 
     List<Coin> currencyPairs;
 
-    public CoinService(CoinDAO coinDAO, CoinbaseDAO coinbaseDAO) {
+    public CoinService(CoinDAO coinDAO, CoinbaseDAO coinbaseDAO) throws IOException, JsonParsingException {
         this.coinDAO = coinDAO;
         this.coinbaseDAO = coinbaseDAO;
 
@@ -49,7 +53,7 @@ public class CoinService {
     public boolean isUserIdValid(Coin coin){
         return coin.getUser_Id() != null && !coin.getUser_Id().trim().equals("");
     }
-    public List<Coin> getCoins(String user_uuid){
+    public List<Coin> getCoins(String user_uuid) throws InvalidClassException, MethodInvocationException, SQLException {
         Coin coin = new Coin();
         coin.setUser_Id(user_uuid);
         if(isUserIdValid(coin)){
@@ -58,7 +62,7 @@ public class CoinService {
         return null;
     }
 
-    public double getTotalWalletValue(List<Coin> coins){
+    public double getTotalWalletValue(List<Coin> coins) throws IOException {
         double result = 0;
 
         for (Coin coin : coins) {
@@ -74,47 +78,44 @@ public class CoinService {
         return false;
     }
 
-    public boolean buyCoin(Coin coin, User user) {
+    public boolean buyCoin(Coin coin, User user) throws InvalidClassException, MethodInvocationException, SQLException, IOException, InvalidRequestException {
         if (!validateCoinPair(coin.getCurrencyPair())) {
             throw new InvalidRequestException("Invalid Currency pair given!");
         }
 
         double purchaseAmount = coin.getAmount() * coinbaseDAO.valueOf(coin.getCurrencyPair());
 
-        if (user.getAmount_invested() > purchaseAmount) {
-            user.setAmount_invested(user.getAmount_invested() - purchaseAmount);
+        if (user.getUsdBalance() > purchaseAmount) {
+            user.setUsdBalance(user.getUsdBalance() - purchaseAmount);
             // check if user already has some of coin
-            try {
-                double coinAmount = coinDAO.getCoinAmount(coin);
-                if (coinAmount != -1) {
-                    // if so update current value
-                    coin.setAmount(coin.getAmount() + coinAmount);
-                    if(coinDAO.update(coin)) return true;
-                } else {
-                    // if not create new entry in coin table
-                    if (coinDAO.save(coin)) return true;
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
 
-        }
-        return false;
+            double coinAmount = coinDAO.getCoinAmount(coin);
+            if (coinAmount != -1) {
+                // if so update current value
+                coin.setAmount(coin.getAmount() + coinAmount);
+                return coinDAO.update(coin);
+            } else {
+                // if not create new entry in coin table
+                return coinDAO.save(coin);
+            }
+        } else {throw new InvalidRequestException("Coin costs more than user can buy!");}
     }
 
     /**
      * takes in the coin the user wants to sell and the amount they want to sell
      */
-    public boolean sellCoin(Coin coin, User user) {
+    public boolean sellCoin(Coin coin, User user) throws InvalidClassException, MethodInvocationException, SQLException, IOException, InvalidRequestException {
         //check if user has coin they want to sell
         Coin ownedCoin = coinDAO.hasCoin(coin);
-        double coinAmount = coin.getAmount()*coinbaseDAO.valueOf(coin.getCurrencyPair());
-        if(!ownedCoin.equals(null)) {//user must have the coin
-            if(ownedCoin.getAmount() < coin.getAmount()){//user must have enough of the coin
-                user.setAmount_invested(user.getAmount_invested() +coinAmount);
+
+        double coinAmount = coin.getAmount() * coinbaseDAO.valueOf(coin.getCurrencyPair());
+
+        if(ownedCoin != null) {//user must have the coin
+            if(ownedCoin.getAmount() >= coin.getAmount()){//user must have enough of the coin
+                user.setUsdBalance(user.getUsdBalance() + coinAmount);
                         // if so update current value
-                        coin.setAmount(coin.getAmount() - coinAmount);
-                        if(coin.getAmount() ==0) coinDAO.removeById(coin);
+                        coin.setAmount(ownedCoin.getAmount() - coin.getAmount());
+                        if(coin.getAmount() ==0) coinDAO.removeById(ownedCoin);
                         else coinDAO.update(coin);
                         return true;
 

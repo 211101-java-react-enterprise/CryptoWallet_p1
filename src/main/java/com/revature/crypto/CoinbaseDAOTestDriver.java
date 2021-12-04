@@ -6,11 +6,12 @@ import com.revature.crypto.models.Coin;
 import com.revature.crypto.models.User;
 import com.revature.crypto.services.CoinService;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CoinbaseDAOTestDriver {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
 
         CoinbaseDAO coinbaseDAO = new CoinbaseDAO();

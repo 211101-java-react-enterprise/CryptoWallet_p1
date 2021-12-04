@@ -7,15 +7,13 @@ import com.revature.crypto.daos.CoinbaseDAO;
 import com.revature.crypto.daos.UserDAO;
 import com.revature.crypto.services.CoinService;
 import com.revature.crypto.services.UserService;
-import com.revature.crypto.web.servlets.LoginServlet;
-import com.revature.crypto.web.servlets.RegistrationServlet;
-import com.revature.crypto.web.servlets.BuyCoinServlet;
-import com.revature.crypto.web.servlets.ViewWalletServlet;
+import com.revature.crypto.web.servlets.*;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Properties;
 
 public class ContextLoaderListener implements ServletContextListener {
@@ -29,10 +27,12 @@ public class ContextLoaderListener implements ServletContextListener {
         try {
             ClassLoader loader = Thread.currentThread().getContextClassLoader();
             props.load(loader.getResourceAsStream("db.properties"));
-        } catch (IOException e) {
+
+            SQLMapper.setProperties(props);
+
+        } catch (IOException | SQLException e) {
             e.printStackTrace();
         }
-        SQLMapper.setProperties(props);
 
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -41,11 +41,17 @@ public class ContextLoaderListener implements ServletContextListener {
 
         CoinDAO coinDAO = new CoinDAO();
         CoinbaseDAO coinbaseDAO = new CoinbaseDAO();
-        CoinService coinService = new CoinService(coinDAO, coinbaseDAO);
+        CoinService coinService = null;
+        try {
+            coinService = new CoinService(coinDAO, coinbaseDAO);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         LoginServlet loginServlet = new LoginServlet(userService, objectMapper);
         RegistrationServlet registrationServlet = new RegistrationServlet(userService, objectMapper);
         BuyCoinServlet buyCoinServlet = new BuyCoinServlet(userService, coinService, objectMapper);
+        SellCoinServlet sellCoinServlet = new SellCoinServlet(userService, coinService,objectMapper);
         ViewWalletServlet viewWalletServlet = new ViewWalletServlet(userService, coinService, objectMapper);
 
 
@@ -53,7 +59,7 @@ public class ContextLoaderListener implements ServletContextListener {
         context.addServlet("LoginServlet", loginServlet).addMapping("/login");
         context.addServlet("RegistrationServlet", registrationServlet).addMapping("/register");
         context.addServlet("BuyCoinServlet", buyCoinServlet).addMapping("/buy");
-        context.addServlet("SellCoinServlet", buyCoinServlet).addMapping("/sell");
+        context.addServlet("SellCoinServlet", sellCoinServlet).addMapping("/sell");
         context.addServlet("ViewWalletServlet", viewWalletServlet).addMapping("/view");
         
 

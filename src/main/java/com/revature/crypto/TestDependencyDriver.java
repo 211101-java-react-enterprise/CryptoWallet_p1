@@ -5,6 +5,7 @@ import com.revature.CryptoORM_P1.annotations.Table;
 import com.revature.CryptoORM_P1.annotations.Value;
 import com.revature.CryptoORM_P1.mapper.SQLMapper;
 
+import java.sql.SQLException;
 import java.util.Properties;
 
 @Table(tableName = "Test_Annotation")
@@ -24,7 +25,7 @@ public class TestDependencyDriver {
         this.testString = testString;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         TestDependencyDriver test = new TestDependencyDriver("This is a test string!");
 
         System.out.println(sqlMapper.insert(test));

@@ -1,7 +1,11 @@
 package com.revature.crypto.daos;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.revature.crypto.exceptions.InvalidRequestException;
+import com.revature.crypto.exceptions.JsonParsingException;
 import com.revature.crypto.models.Coin;
 
 import java.net.*;
@@ -23,22 +27,22 @@ public class CoinbaseDAO {
     }
 
     //returns a USD value given a supported coin
-    public double valueOf(String coin) {
+    public double valueOf(String coin) throws IOException {
         try {
             String json = getProductTicker_E(coin);
             //System.out.println(json);
             JsonNode jsonNode = mapper.readTree(json);
             double value = Double.parseDouble(jsonNode.get("price").textValue());
             return value;
-        } catch (Exception e) {
-            //System.out.println("Trouble parsing the data");
-            return -1;
-            //TODO handle and log exception
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new IOException("CoinbaseDAO#valueOf failed to Parse JSON");
+            //TODO log exception
         }
     }
 
     //returns a list of all supported coins
-    public List<Coin> getAllCoins() {
+    public List<Coin> getAllCoins() throws IOException, JsonParsingException {
         try {
             List<Coin> pairs = new ArrayList<>();
             String json = getTradingPairs_E();
@@ -57,10 +61,14 @@ public class CoinbaseDAO {
 //            }
 
             return coins;
-        } catch (Exception e) {
-            //System.out.println("Trouble parsing the data");
-            return null;
-            //TODO handle and log exception
+        } catch (JsonParseException  | JsonMappingException e) {
+            e.printStackTrace();
+            throw new JsonParsingException("CoinbaseDAO#getAllCoins failed to properly parse JSON");
+            //TODO log exception
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new IOException("CoinbaseDAO#getAllCoins failed to load JSON");
+            //TODO log exception
         }
     }
 
@@ -76,18 +84,18 @@ public class CoinbaseDAO {
     https://developers.coinbase.com/api/v2#data-endpoints
     all methods from this API are tagged with _V2 (version 2, as shown in URL)
      */
-    public String getBuyPrice_V2(String currency_pair) {//ex) BTC-USD
+    public String getBuyPrice_V2(String currency_pair) throws IOException, InvalidRequestException {//ex) BTC-USD
         String url = "https://api.coinbase.com/v2/prices/" + currency_pair + "/buy";
         return getData(url);
     }
 
     //not implemented
-    public String getSupportedCurrencies_V2() {
+    public String getSupportedCurrencies_V2() throws IOException, InvalidRequestException {
         return getData("https://api.coinbase.com/v2/currencies");
     }
 
     //not implemented
-    public String getExchangeRates_V2() {
+    public String getExchangeRates_V2() throws IOException, InvalidRequestException {
         String data = getData("https://api.coinbase.com/v2/exchange-rates");
         return data;
     }
@@ -97,23 +105,25 @@ public class CoinbaseDAO {
       https://docs.cloud.coinbase.com/exchange/reference/
       All methods coming from this API are tagged with _E (exchange, as shown in url)
      */
-    public String getTradingPairs_E() {
+    public String getTradingPairs_E() throws IOException, InvalidRequestException {
         return getData("https://api.exchange.coinbase.com/products");
     }
 
     //not implemented
-    public String getProductStats_E() {
+    public String getProductStats_E() throws IOException, InvalidRequestException {
         return getData("https://api.exchange.coinbase.com/products/BTC-USD/stats");
     }
 
-    public String getProductTicker_E(String currencyPair){return getData("https://api.exchange.coinbase.com/products/"+currencyPair+"/ticker");}
+    public String getProductTicker_E(String currencyPair) throws IOException{
+        return getData("https://api.exchange.coinbase.com/products/"+currencyPair+"/ticker");
+    }
 
 
     /*---------------------------------------------------------------------------------------------------------------
         This method uses HttpURLConnecton from java.net to fetch data from the apis.
         -takes in a url from the API and returns a raw json string
      */
-    private String getData(String urlText) {
+    private String getData(String urlText) throws IOException, InvalidRequestException {
         try {
             //create url and set up connection
             URL url = new URL(urlText);
@@ -141,12 +151,16 @@ public class CoinbaseDAO {
             in.close();
             con.disconnect();
             return content.toString();
-        } catch (Exception e) {
-            //System.out.println("problem retrieving data");
-            //TODO log error. Find more specific exception types
-            // Is it better to put try catch blocks in the other get() methods within this class instead,
-            // to allow for more specific messaging?
-            return null;
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            throw new InvalidRequestException("CoinBaseDAO#getData was likely given a malformedURL");
+            //TODO log error.
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+            throw new InvalidRequestException("CoinBaseDAO#getData was likely given a malformedURL");
+        }catch (IOException e) {
+            e.printStackTrace();
+            throw new IOException("CoinBaseDAO#getData failed to read JSON");
         }
     }
 }
