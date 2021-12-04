@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CoinService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">cryptoWallet-webApp-P1</a> &gt; <a href="index.source.html" class="el_package">com.revature.crypto.services</a> &gt; <span class="el_source">CoinService.java</span></div><h1>CoinService.java</h1><pre class="source lang-java linenums">package com.revature.crypto.services;
+
+import com.revature.CryptoORM_P1.exception.InvalidClassException;
+import com.revature.CryptoORM_P1.exception.MethodInvocationException;
+import com.revature.crypto.daos.CoinDAO;
+import com.revature.crypto.daos.CoinbaseDAO;
+import com.revature.crypto.exceptions.InvalidRequestException;
+import com.revature.crypto.exceptions.JsonParsingException;
+import com.revature.crypto.models.Coin;
+import com.revature.crypto.models.User;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
+
+/**
+ *      CoinAmountService Class holds verification logic for user
+ *
+ *      WalletUUID and CoinAccountUUID are not user entered and
+ *      should be safe.
+ *
+ *      Currency Pair needs to be checked against what pairs are
+ *      valid by coinbase API
+ */
+public class CoinService {
+
+    private CoinDAO coinDAO;
+    private CoinbaseDAO coinbaseDAO;
+
+    List&lt;Coin&gt; currencyPairs;
+
+<span class="nc" id="L32">    public CoinService(CoinDAO coinDAO, CoinbaseDAO coinbaseDAO) throws IOException, JsonParsingException {</span>
+<span class="nc" id="L33">        this.coinDAO = coinDAO;</span>
+<span class="nc" id="L34">        this.coinbaseDAO = coinbaseDAO;</span>
+
+<span class="nc" id="L36">        currencyPairs = coinbaseDAO.getAllCoins();</span>
+<span class="nc" id="L37">    }</span>
+
+    /**
+     *      CoinAmountService#isCoinAmountValid is used to check
+     *      validity of user entered data when attempting to
+     *      save data to database.
+     *
+     *      Parameters: CoinAmount newCoinAmount - To be checked
+     *
+     *      returns: true if CoinAmount is larger than 0
+     *               false if coin amount is less than or equal to 0
+     */
+    public boolean isCoinAmountValid(Coin newCoin) {
+<span class="nc bnc" id="L50" title="All 2 branches missed.">        return newCoin.getAmount() &gt; 0;</span>
+    }
+
+    public boolean isUserIdValid(Coin coin){
+<span class="nc bnc" id="L54" title="All 4 branches missed.">        return coin.getUser_Id() != null &amp;&amp; !coin.getUser_Id().trim().equals(&quot;&quot;);</span>
+    }
+    public List&lt;Coin&gt; getCoins(String user_uuid) throws InvalidClassException, MethodInvocationException, SQLException {
+<span class="nc" id="L57">        Coin coin = new Coin();</span>
+<span class="nc" id="L58">        coin.setUser_Id(user_uuid);</span>
+<span class="nc bnc" id="L59" title="All 2 branches missed.">        if(isUserIdValid(coin)){</span>
+<span class="nc" id="L60">            return coinDAO.getCoinsByUser(coin);</span>
+        }
+<span class="nc" id="L62">        return null;</span>
+    }
+
+    public double getTotalWalletValue(List&lt;Coin&gt; coins) throws IOException {
+<span class="nc" id="L66">        double result = 0;</span>
+
+<span class="nc bnc" id="L68" title="All 2 branches missed.">        for (Coin coin : coins) {</span>
+<span class="nc" id="L69">            result += coinbaseDAO.valueOf(coin.getCurrencyPair()) * coin.getAmount();</span>
+<span class="nc" id="L70">        }</span>
+<span class="nc" id="L71">        return result;</span>
+    }
+
+    public boolean validateCoinPair(String pair) {
+<span class="nc bnc" id="L75" title="All 2 branches missed.">        for (Coin coin : currencyPairs) {</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">            if (coin.getCurrencyPair().equals(pair)) return true;</span>
+<span class="nc" id="L77">        }</span>
+<span class="nc" id="L78">        return false;</span>
+    }
+
+    public boolean buyCoin(Coin coin, User user) throws InvalidClassException, MethodInvocationException, SQLException, IOException, InvalidRequestException {
+<span class="nc bnc" id="L82" title="All 2 branches missed.">        if (!validateCoinPair(coin.getCurrencyPair())) {</span>
+<span class="nc" id="L83">            throw new InvalidRequestException(&quot;Invalid Currency pair given!&quot;);</span>
+        }
+
+<span class="nc" id="L86">        double purchaseAmount = coin.getAmount() * coinbaseDAO.valueOf(coin.getCurrencyPair());</span>
+
+<span class="nc bnc" id="L88" title="All 2 branches missed.">        if (user.getUsdBalance() &gt; purchaseAmount) {</span>
+<span class="nc" id="L89">            user.setUsdBalance(user.getUsdBalance() - purchaseAmount);</span>
+            // check if user already has some of coin
+
+<span class="nc" id="L92">            double coinAmount = coinDAO.getCoinAmount(coin);</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">            if (coinAmount != -1) {</span>
+                // if so update current value
+<span class="nc" id="L95">                coin.setAmount(coin.getAmount() + coinAmount);</span>
+<span class="nc" id="L96">                return coinDAO.update(coin);</span>
+            } else {
+                // if not create new entry in coin table
+<span class="nc" id="L99">                return coinDAO.save(coin);</span>
+            }
+<span class="nc" id="L101">        } else {throw new InvalidRequestException(&quot;Coin costs more than user can buy!&quot;);}</span>
+    }
+
+    /**
+     * takes in the coin the user wants to sell and the amount they want to sell
+     */
+    public boolean sellCoin(Coin coin, User user) throws InvalidClassException, MethodInvocationException, SQLException, IOException, InvalidRequestException {
+        //check if user has coin they want to sell
+<span class="nc" id="L109">        Coin ownedCoin = coinDAO.hasCoin(coin);</span>
+
+<span class="nc" id="L111">        double coinAmount = coin.getAmount() * coinbaseDAO.valueOf(coin.getCurrencyPair());</span>
+
+<span class="nc bnc" id="L113" title="All 2 branches missed.">        if(ownedCoin != null) {//user must have the coin</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">            if(ownedCoin.getAmount() &gt;= coin.getAmount()){//user must have enough of the coin</span>
+<span class="nc" id="L115">                user.setUsdBalance(user.getUsdBalance() + coinAmount);</span>
+                        // if so update current value
+<span class="nc" id="L117">                        coin.setAmount(ownedCoin.getAmount() - coin.getAmount());</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">                        if(coin.getAmount() ==0) coinDAO.removeById(ownedCoin);</span>
+<span class="nc" id="L119">                        else coinDAO.update(coin);</span>
+<span class="nc" id="L120">                        return true;</span>
+
+<span class="nc" id="L122">            } else throw new InvalidRequestException(&quot;Not enough of the coin in your wallet&quot;);</span>
+<span class="nc" id="L123">        } else throw new InvalidRequestException(&quot;You don't own that coin&quot;);</span>
+        //check if amount is valid
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

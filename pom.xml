@@ -4,6 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <jackson.version>2.12.4</jackson.version>
+    </properties>
+
     <groupId>org.example</groupId>
     <artifactId>cryptoWallet-webApp-P1</artifactId>
     <version>1.0-SNAPSHOT</version>
@@ -76,6 +84,9 @@
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
+                        <configuration>
+                            <destFile>$target/coverage-reports/jacoco-ut.exec </destFile>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>report</id>
@@ -84,6 +95,8 @@
                             <goal>report</goal>
                         </goals>
                         <configuration>
+                            <dataFile>$target/coverage-reports/jacoco-ut.exec</dataFile>
+                            <outputDirectory>$target/jacoco-ut</outputDirectory>
                             <excludes>
                                 <exclude>com/revature/crypto/daos/*</exclude>
                                 <exclude>com/revature/crypto/models/*</exclude>
@@ -97,9 +110,6 @@
     </build>
 
 
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-    </properties>
+
 
 </project>
