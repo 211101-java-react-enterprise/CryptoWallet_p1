@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.revature.CryptoORM_P1.exception.InvalidClassException;
 import com.revature.CryptoORM_P1.exception.MethodInvocationException;
 import com.revature.crypto.exceptions.AuthenticationException;
+import com.revature.crypto.exceptions.ConnectionDatabaseException;
 import com.revature.crypto.models.Coin;
 import com.revature.crypto.models.User;
 import com.revature.crypto.services.CoinService;
@@ -73,6 +74,9 @@ public class ViewWalletServlet extends HttpServlet {
         } catch (InvalidClassException | MethodInvocationException | IOException e) {
             resp.setStatus(500);
             logger.error("internal server error");
+        } catch(ConnectionDatabaseException e) {
+            logger.error("Could not connect to database");
+            resp.setStatus(408);
         }
     }
 

@@ -1,7 +1,10 @@
 package com.revature.crypto.web.servlets;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
+import com.revature.CryptoORM_P1.exception.InvalidClassException;
+import com.revature.CryptoORM_P1.exception.MethodInvocationException;
 import com.revature.crypto.exceptions.AuthenticationException;
+import com.revature.crypto.exceptions.ConnectionDatabaseException;
 import com.revature.crypto.exceptions.InvalidRequestException;
 import com.revature.crypto.models.User;
 import com.revature.crypto.services.UserService;
@@ -11,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class LoginServlet extends HttpServlet {
 
@@ -47,9 +51,12 @@ public class LoginServlet extends HttpServlet {
         } catch (AuthenticationException e) {
             logger.error("Invalid username or password!");
             resp.setStatus(401); // user provided incorrect credentials
-        } catch (Exception e) {
-            logger.error("Intertnal server error"); // for dev purposes only, to be deleted before push to prod
+        } catch (InvalidClassException | MethodInvocationException e) {
+            logger.error("Internal server error"); // for dev purposes only, to be deleted before push to prod
             resp.setStatus(500);
+        } catch(ConnectionDatabaseException e) {
+            logger.error("Could not connect to database");
+            resp.setStatus(408);
         }
 
     }

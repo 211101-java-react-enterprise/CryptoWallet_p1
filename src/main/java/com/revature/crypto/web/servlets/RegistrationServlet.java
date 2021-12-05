@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.CryptoORM_P1.exception.InvalidClassException;
 import com.revature.CryptoORM_P1.exception.MethodInvocationException;
 import com.revature.crypto.exceptions.AuthenticationException;
+import com.revature.crypto.exceptions.ConnectionDatabaseException;
 import com.revature.crypto.exceptions.InvalidRequestException;
 import com.revature.crypto.models.User;
 import com.revature.crypto.services.UserService;
@@ -52,6 +53,9 @@ public class RegistrationServlet extends HttpServlet {
         } catch (IOException | InvalidRequestException e) {
             resp.setStatus(400);
             logger.error("User made a bad request");
+        } catch(ConnectionDatabaseException e) {
+            logger.error("User already exists!");
+            resp.setStatus(403);
         }
     }
 
@@ -81,6 +85,9 @@ public class RegistrationServlet extends HttpServlet {
         } catch (AuthenticationException e) {
             logger.error("No user logged in");
             resp.setStatus(401);
+        } catch(ConnectionDatabaseException e) {
+            logger.error("Could not connect to database");
+            resp.setStatus(408);
         }
     }
 }

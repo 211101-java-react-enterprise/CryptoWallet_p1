@@ -3,6 +3,7 @@ package com.revature.crypto.web.servlets;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.CryptoORM_P1.exception.InvalidClassException;
 import com.revature.CryptoORM_P1.exception.MethodInvocationException;
+import com.revature.crypto.exceptions.ConnectionDatabaseException;
 import com.revature.crypto.exceptions.InvalidRequestException;
 import com.revature.crypto.exceptions.UnauthorizedException;
 import com.revature.crypto.models.Coin;
@@ -60,6 +61,9 @@ public class BuyCoinServlet extends HttpServlet {
         } catch (UnauthorizedException e) {
             logger.error("the user is not authorized");
             resp.setStatus(401);
+        } catch(ConnectionDatabaseException e) {
+            logger.error("Could not connect to database");
+            resp.setStatus(408);
         }
     }
 }
