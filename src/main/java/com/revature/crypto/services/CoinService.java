@@ -91,6 +91,10 @@ public class CoinService {
      * takes in the coin the user wants to sell and the amount they want to sell
      */
     public boolean sellCoin(Coin coin, User user) {
+        if (!validateCoinPair(coin.getCurrencyPair())) {
+            throw new InvalidRequestException("Invalid Currency pair given!");
+        }
+
         //check if user has coin they want to sell
         Coin ownedCoin = coinDAO.hasCoin(coin);
 
