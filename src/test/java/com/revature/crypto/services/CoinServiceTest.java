@@ -90,4 +90,22 @@ public class CoinServiceTest {
         Assert.assertNotNull("Expect List to be returned" ,actualResult);
     }
 
+    @Test
+    public void test_getCoins_returnsNull_givenInvalidString() throws SQLException {
+        // Arrange
+        String invalidString_1 = "";
+        String invalidString_2 = "        ";
+        String invalidString_3 = null;
+
+        // Act
+        List<Coin> actualResult_1 = sut.getCoins(invalidString_1);
+        List<Coin> actualResult_2 = sut.getCoins(invalidString_2);
+        List<Coin> actualResult_3 = sut.getCoins(invalidString_3);
+
+        // Assert
+        Assert.assertNull("Expected String to be considered Invalid and null returned.", actualResult_1);
+        Assert.assertNull("Expected String to be considered Invalid and null returned.", actualResult_2);
+        Assert.assertNull("Expected String to be considered Invalid and null returned.", actualResult_3);
+    }
+
 }

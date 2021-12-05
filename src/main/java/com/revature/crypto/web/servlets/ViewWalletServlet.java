@@ -69,7 +69,7 @@ public class ViewWalletServlet extends HttpServlet {
         }catch (AuthenticationException e) {
             resp.setStatus(401);//unauthenticated client
             e.printStackTrace();
-        }catch (SQLException | IOException e){
+        }catch (IOException e){
             resp.setStatus(400);
             e.printStackTrace();
         } catch (InvalidClassException | MethodInvocationException e) {
