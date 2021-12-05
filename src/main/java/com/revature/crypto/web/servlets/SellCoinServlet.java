@@ -60,7 +60,7 @@ public class SellCoinServlet extends HttpServlet {
             logger.error("unauthorized to make make a sale");
         } catch (IOException | InvalidRequestException e) {
             resp.setStatus(400);
-            logger.error("User entered an invalid amount");
+            logger.error("User is selling more than they own or entered a negative amount");
         } catch (MethodInvocationException | InvalidClassException e) {
             resp.setStatus(500);
             logger.error("Internal server error");

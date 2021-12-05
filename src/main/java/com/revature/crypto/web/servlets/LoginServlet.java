@@ -47,7 +47,7 @@ public class LoginServlet extends HttpServlet {
 
         } catch (InvalidRequestException | UnrecognizedPropertyException e) {
             resp.setStatus(400); // user made a bad request
-            logger.error("User made a bad request");
+            logger.error("Already logged in");
         } catch (AuthenticationException e) {
             logger.error("Invalid username or password!");
             resp.setStatus(401); // user provided incorrect credentials
@@ -64,7 +64,7 @@ public class LoginServlet extends HttpServlet {
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
         HttpSession session = req.getSession(false);
         if (session != null) {
-            logger.trace("Logout Successful");
+            logger.info("Logout Successful");
             resp.setStatus(204);
             session.invalidate(); // invalidates the session associated with this request (logging the user out)
         } else {

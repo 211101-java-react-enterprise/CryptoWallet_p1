@@ -6,6 +6,7 @@ import com.revature.CryptoORM_P1.exception.MethodInvocationException;
 import com.revature.crypto.exceptions.AuthenticationException;
 import com.revature.crypto.exceptions.ConnectionDatabaseException;
 import com.revature.crypto.exceptions.InvalidRequestException;
+import com.revature.crypto.exceptions.UniqueCredentialsException;
 import com.revature.crypto.models.User;
 import com.revature.crypto.services.UserService;
 import org.apache.logging.log4j.LogManager;
@@ -43,8 +44,8 @@ public class RegistrationServlet extends HttpServlet {
                 logger.trace("User persisted to database");
             } else {
                 //failed to persist user to database
-                logger.error("failed to persist user to database");
                 resp.setStatus(500);
+                logger.error("failed to persist user to database");
             }
 
         } catch (MethodInvocationException | InvalidClassException e) {
@@ -54,8 +55,12 @@ public class RegistrationServlet extends HttpServlet {
             resp.setStatus(400);
             logger.error("User made a bad request");
         } catch(ConnectionDatabaseException e) {
-            logger.error("User already exists!");
             resp.setStatus(403);
+            logger.error("User already exists!");
+        }
+        catch(UniqueCredentialsException e){
+            resp.setStatus(403);
+            logger.error("Account already exists!");
         }
     }
 
@@ -80,14 +85,15 @@ public class RegistrationServlet extends HttpServlet {
                 logger.error("Failed to delete user");
             }
         } catch (MethodInvocationException | InvalidClassException | IOException e) {
-            logger.error("Internal Server Error");
             resp.setStatus(500);
+            logger.error("Internal Server Error");
         } catch (AuthenticationException e) {
-            logger.error("No user logged in");
             resp.setStatus(401);
+            logger.error("No user logged in");
         } catch(ConnectionDatabaseException e) {
-            logger.error("Could not connect to database");
             resp.setStatus(408);
+            logger.error("Could not connect to database");
         }
+
     }
 }
