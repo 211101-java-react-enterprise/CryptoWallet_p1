@@ -27,7 +27,7 @@ public class CoinbaseDAO {
     }
 
     //returns a USD value given a supported coin
-    public double valueOf(String coin) throws IOException {
+    public double valueOf(String coin) {
         try {
             String json = getProductTicker_E(coin);
             //System.out.println(json);
@@ -35,40 +35,28 @@ public class CoinbaseDAO {
             double value = Double.parseDouble(jsonNode.get("price").textValue());
             return value;
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new IOException("CoinbaseDAO#valueOf failed to Parse JSON");
+            throw new JsonParsingException("CoinbaseDAO#valueOf failed to Parse JSON");
             //TODO log exception
         }
     }
 
     //returns a list of all supported coins
-    public List<Coin> getAllCoins() throws IOException, JsonParsingException {
+    public List<Coin> getAllCoins() {
         try {
             List<Coin> pairs = new ArrayList<>();
             String json = getTradingPairs_E();
-            //Coin[] coins = mapper.readValue(json, Coin[].class);
             TypeFactory typeFactory = mapper.getTypeFactory();
             List<Coin> coins = mapper.
                     readValue(json, typeFactory.
                             constructCollectionType(List.class, Coin.class));
             coins = coins.stream().filter(c -> c.getCurrencyPair().endsWith("USD")).collect(Collectors.toList());
-//            for(Coin coin: coins){
-//                String cut_id = coin.getId().substring(coin.getId().length()-3);//checks if currency paired with USD
-//                if(!cut_id.equals("USD")){
-//                    System.out.println("removing coin: "+coin.getId());
-//                    coins.remove(coin);
-//                }
-//            }
 
             return coins;
         } catch (JsonParseException  | JsonMappingException e) {
             e.printStackTrace();
             throw new JsonParsingException("CoinbaseDAO#getAllCoins failed to properly parse JSON");
-            //TODO log exception
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new IOException("CoinbaseDAO#getAllCoins failed to load JSON");
-            //TODO log exception
+            throw new JsonParsingException("CoinbaseDAO#getAllCoins ObjectMapper failed to read value");
         }
     }
 
@@ -84,18 +72,18 @@ public class CoinbaseDAO {
     https://developers.coinbase.com/api/v2#data-endpoints
     all methods from this API are tagged with _V2 (version 2, as shown in URL)
      */
-    public String getBuyPrice_V2(String currency_pair) throws IOException, InvalidRequestException {//ex) BTC-USD
+    public String getBuyPrice_V2(String currency_pair) {//ex) BTC-USD
         String url = "https://api.coinbase.com/v2/prices/" + currency_pair + "/buy";
         return getData(url);
     }
 
     //not implemented
-    public String getSupportedCurrencies_V2() throws IOException, InvalidRequestException {
+    public String getSupportedCurrencies_V2() {
         return getData("https://api.coinbase.com/v2/currencies");
     }
 
     //not implemented
-    public String getExchangeRates_V2() throws IOException, InvalidRequestException {
+    public String getExchangeRates_V2() {
         String data = getData("https://api.coinbase.com/v2/exchange-rates");
         return data;
     }
@@ -105,16 +93,16 @@ public class CoinbaseDAO {
       https://docs.cloud.coinbase.com/exchange/reference/
       All methods coming from this API are tagged with _E (exchange, as shown in url)
      */
-    public String getTradingPairs_E() throws IOException, InvalidRequestException {
+    public String getTradingPairs_E() {
         return getData("https://api.exchange.coinbase.com/products");
     }
 
     //not implemented
-    public String getProductStats_E() throws IOException, InvalidRequestException {
+    public String getProductStats_E() {
         return getData("https://api.exchange.coinbase.com/products/BTC-USD/stats");
     }
 
-    public String getProductTicker_E(String currencyPair) throws IOException{
+    public String getProductTicker_E(String currencyPair) {
         return getData("https://api.exchange.coinbase.com/products/"+currencyPair+"/ticker");
     }
 
@@ -123,7 +111,7 @@ public class CoinbaseDAO {
         This method uses HttpURLConnecton from java.net to fetch data from the apis.
         -takes in a url from the API and returns a raw json string
      */
-    private String getData(String urlText) throws IOException, InvalidRequestException {
+    private String getData(String urlText) {
         try {
             //create url and set up connection
             URL url = new URL(urlText);
@@ -160,7 +148,7 @@ public class CoinbaseDAO {
             throw new InvalidRequestException("CoinBaseDAO#getData was likely given a malformedURL");
         }catch (IOException e) {
             e.printStackTrace();
-            throw new IOException("CoinBaseDAO#getData failed to read JSON");
+            throw new JsonParsingException("CoinBaseDAO#getData failed to read JSON");
         }
     }
 }

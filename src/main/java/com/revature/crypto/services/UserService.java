@@ -5,7 +5,9 @@ import com.revature.CryptoORM_P1.exception.MethodInvocationException;
 import com.revature.CryptoORM_P1.mapper.SQLMapper;
 import com.revature.crypto.daos.UserDAO;
 import com.revature.crypto.exceptions.AuthenticationException;
+import com.revature.crypto.exceptions.ConnectionDatabaseException;
 import com.revature.crypto.exceptions.InvalidRequestException;
+import com.revature.crypto.exceptions.UniqueCredentialsException;
 import com.revature.crypto.models.User;
 
 import java.sql.SQLException;
@@ -24,30 +26,28 @@ public class UserService {
         this.userDAO = userDAO;
     }
 
-    public boolean registerNewUser(User newUser) throws InvalidClassException, MethodInvocationException, SQLException, InvalidRequestException  {
+    public boolean registerNewUser(User newUser)  {
         if (!isUserValid(newUser)) {
             throw new InvalidRequestException("Invalid user data provided!");
         }
-
         if (userDAO.findUserByUsername(newUser) != null)  {
-            throw new InvalidRequestException("Username is already taken!");
+            throw new UniqueCredentialsException("Username is already taken!");
         }
-
         //give User UUID
         newUser.setUserId(UUID.randomUUID().toString());
-
         if(!userDAO.save(newUser)) {
-            throw new InvalidRequestException("The user could not be persisted to database for some reason");
+            throw new ConnectionDatabaseException("The user could not be persisted to database");
         }
         return true;
     }
 
-    public boolean deleteUser(User deleteUser) throws InvalidClassException, MethodInvocationException, SQLException {
+    public boolean deleteUser(User deleteUser) {
         if (userDAO.removeById(deleteUser)) {
             return true;
         }
         return false;
     }
+
     /**
      *      UserService#isUserValid is used to check if a user has
      *      provided valid information before persisting to database.
@@ -69,7 +69,7 @@ public class UserService {
     /**
      * calls methods important to authenticating the integrity of the data and then persists
      */
-    public User authenticateUser(User sessionUser) throws InvalidClassException, MethodInvocationException, SQLException, InvalidRequestException, AuthenticationException {
+    public User authenticateUser(User sessionUser)  {
 
         if (!isUserAuthentic(sessionUser)) {
             throw new InvalidRequestException("Invalid credential values provided!");
@@ -93,9 +93,8 @@ public class UserService {
         return sessionUser.getPassword() != null && !sessionUser.getPassword().trim().equals("");
     }
 
-    public boolean updateUser(User updatedUser) throws InvalidClassException, MethodInvocationException, SQLException {
+    public boolean updateUser(User updatedUser)  {
         return userDAO.update(updatedUser);
     }
-
 
 }

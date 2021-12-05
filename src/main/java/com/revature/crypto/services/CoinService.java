@@ -29,7 +29,7 @@ public class CoinService {
 
     List<Coin> currencyPairs;
 
-    public CoinService(CoinDAO coinDAO, CoinbaseDAO coinbaseDAO) throws IOException, JsonParsingException {
+    public CoinService(CoinDAO coinDAO, CoinbaseDAO coinbaseDAO)  {
         this.coinDAO = coinDAO;
         this.coinbaseDAO = coinbaseDAO;
 

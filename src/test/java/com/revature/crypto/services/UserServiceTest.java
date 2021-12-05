@@ -1,6 +1,7 @@
 package com.revature.crypto.services;
 
 import com.revature.crypto.daos.UserDAO;
+import com.revature.crypto.exceptions.AuthenticationException;
 import com.revature.crypto.exceptions.InvalidRequestException;
 import com.revature.crypto.models.User;
 import org.junit.After;
@@ -42,8 +43,6 @@ public class UserServiceTest {
 
     @Test
     public void test_isUserValid_returnsTrue_givenValidUser() {
-
-        // AAA pattern: Arrange, Act, Assert
 
         // Arrange
         User validUser = new User("valid", "valid", "valid", "valid", "valid", 1);
@@ -134,10 +133,10 @@ public class UserServiceTest {
     }
 
     @Test
-    public void test_registerNewUser_returns_true_given_valid_user() throws SQLException {
+    public void test_registerNewUser_returnsTrue_givenValidUser() {
         //Arrange
         User validUser = new User("valid", "valid", "valid", "valid");
-        when(mockUserDAO.findUserByUsername(validUser)).thenReturn(validUser);
+        when(mockUserDAO.findUserByUsername(validUser)).thenReturn(null);
         when(mockUserDAO.save(validUser)).thenReturn(true);
 
         //Act
@@ -150,19 +149,17 @@ public class UserServiceTest {
     }
 
     @Test (expected = InvalidRequestException.class)
-    public void test_registerNewUser_throws_invalid_request_exception_given_invalid_user() throws SQLException {
+    public void test_registerNewUser_throwsInvalidRequestException_givenInvalidUser() {
         //Arrange
         User invalidUser = new User(null, "valid", "valid", "valid");
         when(mockUserDAO.findUserByUsername(invalidUser)).thenReturn(invalidUser);
         when(mockUserDAO.save(invalidUser)).thenReturn(true);
 
         //Act
-        try{
-            boolean actualResult = sut.registerNewUser(invalidUser);
-        } finally {
-            verify(mockUserDAO, times(0)).findUserByUsername(invalidUser);
-            verify(mockUserDAO, times(0)).save(invalidUser);
-        }
+        boolean actualResult = sut.registerNewUser(invalidUser);
+        verify(mockUserDAO, times(0)).findUserByUsername(invalidUser);
+        verify(mockUserDAO, times(0)).save(invalidUser);
+
     }
 
     @Test
@@ -195,79 +192,96 @@ public class UserServiceTest {
     }
 
 
+   @Test
+    public void test_authenticateUser_returnsValidUser_givenValidSessionUser() throws SQLException {
+        //Arrange
+       User validUser = new User("valid", "valid", "valid", "valid");
+       when(mockUserDAO.findUserByUsernameAndPassword(validUser)).thenReturn(validUser);
 
+       //Act
+       User user = sut.authenticateUser(validUser);
 
+       //assert
+       verify(mockUserDAO, times(1)).findUserByUsernameAndPassword(user);
+       Assert.assertNotNull(user);
+   }
 
-//
-//    @Test
-//    public void test_registerNewUser_returnsTrue_givenValidUser() {
-//
-//        // Arrange
-//        User validUser = new User("valid", "valid", "valid", "valid", "valid");
-//        when(mockUserDAO.findUserByUsername(validUser.getUsername())).thenReturn(null);
-//        when(mockUserDAO.save(validUser)).thenReturn(validUser);
-//
-//        // Act
-//        boolean actualResult = sut.registerNewUser(validUser);
-//
-//        // Assert
-//        Assert.assertTrue("Expected result to be true with valid user provided.", actualResult);
-//        verify(mockUserDAO, times(1)).save(validUser);
-//
-//    }
-//
-//    @Test(expected = ResourcePersistenceException.class)
-//    public void test_registerNewUser_throwsResourcePersistenceException_givenValidUserWithTakenUsername() {
-//
-//        // Arrange
-//        User validUser = new User("valid", "valid", "valid", "valid", "valid");
-//        when(mockUserDAO.findUserByUsername(validUser.getUsername())).thenReturn(new User());
-//        when(mockUserDAO.save(validUser)).thenReturn(validUser);
-//
-//        // Act
-//        try {
-//            boolean actualResult = sut.registerNewUser(validUser);
-//        } finally {
-//            // Assert
-//            verify(mockUserDAO, times(0)).save(validUser);
-//        }
-//
-//    }
-//
-//    @Test(expected = ResourcePersistenceException.class)
-//    public void test_registerNewUser_throwsResourcePersistenceException_givenValidUserWithTakenEmail() {
-//
-//        // Arrange
-//        User validUser = new User("valid", "valid", "valid", "valid", "valid");
-//        when(mockUserDAO.findUserByUsername(validUser.getUsername())).thenReturn(null);
-//        when(mockUserDAO.findUserByEmail(validUser.getEmail())).thenReturn(new User());
-//        when(mockUserDAO.save(validUser)).thenReturn(validUser);
-//
-//        // Act
-//        try {
-//            boolean actualResult = sut.registerNewUser(validUser);
-//        } finally {
-//            // Assert
-//            verify(mockUserDAO, times(0)).save(validUser);
-//        }
-//
-//    }
-//
-//    @Test(expected = InvalidRequestException.class)
-//    public void test_registerNewUser_throwsInvalidRequestException_givenInvalidUser() {
-//        sut.registerNewUser(null);
-//    }
-//
-//    // TODO implement test case
-//    @Test
-//    public void test_registerNewUser_throwsInvalidRequestException_givenUserWithDuplicatedEmailOrUsername() {
-//
-//        // Arrange
-//
-//        // Act
-//
-//        // Assert
-//
-//    }
+   @Test(expected = InvalidRequestException.class)
+    public void test_authenticateUser_throwsInvalidRequestException_givenInvalidUser() throws SQLException {
+        //Arrange
+       User invalidUser = new User(null, "valid", "valid", "valid");
+       when(mockUserDAO.findUserByUsernameAndPassword(invalidUser)).thenReturn(invalidUser);
+
+       //Act
+       User user = sut.authenticateUser(invalidUser);
+       verify(mockUserDAO, times(0)).findUserByUsername(invalidUser);
+
+   }
+
+    @Test(expected = AuthenticationException.class)
+    public void test_authenticateUser_throwsAuthenticationException_givenInauthenticUser() throws SQLException {
+        //Arrange
+        User inauthenticUser = new User("valid", "valid", "valid", "valid");
+        when(mockUserDAO.findUserByUsernameAndPassword(inauthenticUser)).thenReturn(null);
+
+        //Act
+        User user = sut.authenticateUser(inauthenticUser);
+        verify(mockUserDAO, times(0)).findUserByUsername(inauthenticUser);
+
+    }
+
+    @Test
+    public void test_deleteUser_returnsTrue_givenValidUser(){
+        //arrange
+        User validUser = new User("valid","valid","valid","valid");
+        when(mockUserDAO.removeById(validUser)).thenReturn(true);
+
+        //act
+        boolean actualResult = sut.deleteUser(validUser);
+
+        //assert
+        Assert.assertTrue(actualResult);
+
+    }
+
+    @Test
+    public void test_deleteUser_returnsFalse_givenInvalidUser(){
+        //arrange
+        User invalidUser = new User(null, "valid", "valid", "valid");
+        when(mockUserDAO.removeById(invalidUser)).thenReturn(false);
+
+        //act
+        boolean actualResult = sut.deleteUser(invalidUser);
+
+        //assert
+        Assert.assertFalse(actualResult);
+    }
+
+    @Test
+    public void test_updateUser_returnsTrue_givenValidUser(){
+        //arrange
+        User validUser = new User("valid","valid","valid","valid");
+        when(mockUserDAO.update(validUser)).thenReturn(true);
+
+        //act
+        boolean actualResult = sut.updateUser(validUser);
+
+        //assert
+        Assert.assertTrue(actualResult);
+
+    }
+
+    @Test
+    public void test_updateUser_returnsFalse_givenInvalidUser(){
+        //arrange
+        User invalidUser = new User(null, "valid", "valid", "valid");
+        when(mockUserDAO.removeById(invalidUser)).thenReturn(false);
+
+        //act
+        boolean actualResult = sut.updateUser(invalidUser);
+
+        //assert
+        Assert.assertFalse(actualResult);
+    }
 
 }
