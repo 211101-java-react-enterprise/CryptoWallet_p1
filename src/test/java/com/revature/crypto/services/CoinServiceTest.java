@@ -2,9 +2,8 @@ package com.revature.crypto.services;
 
 import com.revature.crypto.daos.CoinDAO;
 import com.revature.crypto.daos.CoinbaseDAO;
-import com.revature.crypto.daos.UserDAO;
 import com.revature.crypto.models.Coin;
-import com.revature.crypto.models.User;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -12,6 +11,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.sql.SQLException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,4 +88,5 @@ public class CoinServiceTest {
         verify(mockCoinDAO, times(1)).getCoinsByUser(new Coin());
         Assert.assertNotNull("Expect List to be returned" ,actualResult);
     }
+
 }
