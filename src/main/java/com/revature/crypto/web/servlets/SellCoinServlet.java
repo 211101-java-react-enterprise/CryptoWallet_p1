@@ -55,7 +55,7 @@ public class SellCoinServlet extends HttpServlet {
         } catch (UnauthorizedException e) {
             resp.setStatus(401);
             e.printStackTrace();
-        } catch (IOException | SQLException | InvalidRequestException e) {
+        } catch (IOException | InvalidRequestException e) {
             resp.setStatus(400);
             e.printStackTrace();
         } catch (MethodInvocationException | InvalidClassException e) {
