@@ -46,7 +46,7 @@ public class RegistrationServlet extends HttpServlet {
         } catch (MethodInvocationException | InvalidClassException e) {
             resp.setStatus(500);
             e.printStackTrace();
-        } catch (IOException | SQLException | InvalidRequestException e) {
+        } catch (IOException | InvalidRequestException e) {
             resp.setStatus(400);
             e.printStackTrace();
         }
@@ -73,7 +73,7 @@ public class RegistrationServlet extends HttpServlet {
         } catch (MethodInvocationException | InvalidClassException e) {
             e.printStackTrace();
             resp.setStatus(500);
-        } catch (IOException | SQLException e) {
+        } catch (IOException e) {
             resp.setStatus(400);
             e.printStackTrace();
         } catch (AuthenticationException e) {
