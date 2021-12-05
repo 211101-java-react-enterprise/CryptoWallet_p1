@@ -23,6 +23,8 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         try {
+            HttpSession session = req.getSession(false);
+            if(session!=null) throw new InvalidRequestException("already logged in");//somebody is logged in
             User creds = objectMapper.readValue(req.getInputStream(), User.class);
             User verifiedUser = userService.authenticateUser(creds);
 

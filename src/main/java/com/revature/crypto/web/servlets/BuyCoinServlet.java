@@ -9,20 +9,20 @@ import com.revature.crypto.models.Coin;
 import com.revature.crypto.models.User;
 import com.revature.crypto.services.CoinService;
 import com.revature.crypto.services.UserService;
-
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.sql.SQLException;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class BuyCoinServlet extends HttpServlet {
 
     private UserService userService;
     private CoinService coinService;
     private ObjectMapper objectMapper;
+    private static final Logger logger = LogManager.getLogger(BuyCoinServlet.class);
 
     public BuyCoinServlet(UserService userService, CoinService coinService, ObjectMapper objectMapper) {
         this.userService = userService;
@@ -45,18 +45,20 @@ public class BuyCoinServlet extends HttpServlet {
             if (coinService.buyCoin(transaction, verifiedUser)) {
 
                 if (userService.updateUser(verifiedUser)) {
+                    logger.trace("successfully updated user");
                     resp.setStatus(204);
                 } else {throw new InvalidRequestException("Failed to update user, enjoy your free money!");}
 
             } else {throw new InvalidRequestException("Could not persist coin purchase to database");}
 
         } catch (InvalidClassException | MethodInvocationException e) {
+            logger.error("could not invoke method");
             resp.setStatus(500);
-            e.printStackTrace();
         } catch (InvalidRequestException | IOException e) {
+            logger.error("the user made an invalid request");
             resp.setStatus(400);
-            e.printStackTrace();
         } catch (UnauthorizedException e) {
+            logger.error("the user is not authorized");
             resp.setStatus(401);
             e.printStackTrace();
         }

@@ -71,7 +71,7 @@ public class CoinService {
 
         double purchaseAmount = coin.getAmount() * coinbaseDAO.valueOf(coin.getCurrencyPair());
 
-        if (user.getUsdBalance() > purchaseAmount) {
+        if (user.getUsdBalance() > purchaseAmount && purchaseAmount > 0) {
             user.setUsdBalance(user.getUsdBalance() - purchaseAmount);
             // check if user already has some of coin
 
@@ -84,7 +84,7 @@ public class CoinService {
                 // if not create new entry in coin table
                 return coinDAO.save(coin);
             }
-        } else {throw new InvalidRequestException("Coin costs more than user can buy!");}
+        } else {throw new InvalidRequestException("amount specified is negative or too expensive");}
     }
 
     /**
@@ -101,7 +101,7 @@ public class CoinService {
         double coinAmount = coin.getAmount() * coinbaseDAO.valueOf(coin.getCurrencyPair());
 
         if(ownedCoin != null) {//user must have the coin
-            if(ownedCoin.getAmount() >= coin.getAmount()){//user must have enough of the coin
+            if(ownedCoin.getAmount() >= coin.getAmount() && coin.getAmount()>0){//user must have enough of the coin and the amount must be positive
                 user.setUsdBalance(user.getUsdBalance() + coinAmount);
                         // if so update current value
                         coin.setAmount(ownedCoin.getAmount() - coin.getAmount());
@@ -109,7 +109,7 @@ public class CoinService {
                         else coinDAO.update(coin);
                         return true;
 
-            } else throw new InvalidRequestException("Not enough of the coin in your wallet");
+            } else throw new InvalidRequestException("Not enough of the coin or amount entered is below 0");
         } else throw new InvalidRequestException("You don't own that coin");
         //check if amount is valid
     }
