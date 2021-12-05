@@ -1,7 +1,11 @@
 package com.revature.crypto.daos;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.revature.crypto.exceptions.InvalidRequestException;
+import com.revature.crypto.exceptions.JsonParsingException;
 import com.revature.crypto.models.Coin;
 
 import java.net.*;
@@ -25,15 +29,14 @@ public class CoinbaseDAO {
     //returns a USD value given a supported coin
     public double valueOf(String coin) {
         try {
-            String json = getBuyPrice_V2(coin);
+            String json = getProductTicker_E(coin);
             //System.out.println(json);
             JsonNode jsonNode = mapper.readTree(json);
-            double value = Double.parseDouble(jsonNode.get("data").get("amount").textValue());
+            double value = Double.parseDouble(jsonNode.get("price").textValue());
             return value;
-        } catch (Exception e) {
-            //System.out.println("Trouble parsing the data");
-            return -1;
-            //TODO handle and log exception
+        } catch (IOException e) {
+            throw new JsonParsingException("CoinbaseDAO#valueOf failed to Parse JSON");
+            //TODO log exception
         }
     }
 
@@ -42,25 +45,18 @@ public class CoinbaseDAO {
         try {
             List<Coin> pairs = new ArrayList<>();
             String json = getTradingPairs_E();
-            //Coin[] coins = mapper.readValue(json, Coin[].class);
             TypeFactory typeFactory = mapper.getTypeFactory();
             List<Coin> coins = mapper.
                     readValue(json, typeFactory.
                             constructCollectionType(List.class, Coin.class));
-            coins = coins.stream().filter(c -> c.getId().endsWith("USD")).collect(Collectors.toList());
-//            for(Coin coin: coins){
-//                String cut_id = coin.getId().substring(coin.getId().length()-3);//checks if currency paired with USD
-//                if(!cut_id.equals("USD")){
-//                    System.out.println("removing coin: "+coin.getId());
-//                    coins.remove(coin);
-//                }
-//            }
+            coins = coins.stream().filter(c -> c.getCurrencyPair().endsWith("USD")).collect(Collectors.toList());
 
             return coins;
-        } catch (Exception e) {
-            //System.out.println("Trouble parsing the data");
-            return null;
-            //TODO handle and log exception
+        } catch (JsonParseException  | JsonMappingException e) {
+            e.printStackTrace();
+            throw new JsonParsingException("CoinbaseDAO#getAllCoins failed to properly parse JSON");
+        } catch (IOException e) {
+            throw new JsonParsingException("CoinbaseDAO#getAllCoins ObjectMapper failed to read value");
         }
     }
 
@@ -106,6 +102,10 @@ public class CoinbaseDAO {
         return getData("https://api.exchange.coinbase.com/products/BTC-USD/stats");
     }
 
+    public String getProductTicker_E(String currencyPair) {
+        return getData("https://api.exchange.coinbase.com/products/"+currencyPair+"/ticker");
+    }
+
 
     /*---------------------------------------------------------------------------------------------------------------
         This method uses HttpURLConnecton from java.net to fetch data from the apis.
@@ -139,12 +139,16 @@ public class CoinbaseDAO {
             in.close();
             con.disconnect();
             return content.toString();
-        } catch (Exception e) {
-            //System.out.println("problem retrieving data");
-            //TODO log error. Find more specific exception types
-            // Is it better to put try catch blocks in the other get() methods within this class instead,
-            // to allow for more specific messaging?
-            return null;
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            throw new InvalidRequestException("CoinBaseDAO#getData was likely given a malformedURL");
+            //TODO log error.
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+            throw new InvalidRequestException("CoinBaseDAO#getData was likely given a malformedURL");
+        }catch (IOException e) {
+            e.printStackTrace();
+            throw new JsonParsingException("CoinBaseDAO#getData failed to read JSON");
         }
     }
 }

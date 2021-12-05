@@ -1,5 +1,9 @@
 package com.revature.crypto.models;
 
+import com.revature.CryptoORM_P1.annotations.Column;
+import com.revature.CryptoORM_P1.annotations.Table;
+import com.revature.CryptoORM_P1.annotations.Value;
+
 /**
  *  User class is a simple data model used to store information relevant to
  *  a user
@@ -8,13 +12,22 @@ package com.revature.crypto.models;
  *
  *  class primarily consists of simple getters and setters
  */
+@Table(tableName = "app_user")
 public class User {
 
     //000000000000000000000000000000000000000000000000000000000000000000000000000000000
-
-    private String userUUID;
+    @Column(columnName = "user_uuid", columnType = "v")
+    private String userId;
+    @Column(columnName = "username", columnType = "v")
     private String username;
+    @Column(columnName = "password", columnType = "v")
     private String password;
+    @Column(columnName = "first_name", columnType = "v")
+    private String firstName;
+    @Column(columnName = "last_name", columnType = "v")
+    private String lastName;
+    @Column(columnName = "dollars_invested", columnType = "n")
+    private double usdBalance;
 
     //000000000000000000000000000000000000000000000000000000000000000000000000000000000
 
@@ -26,32 +39,90 @@ public class User {
 
     }
 
+    public User(String userId, String username, String password, String firstName, String lastName, double usdBalance) {
+        this.userId = userId;
+        this.username = username;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.usdBalance = usdBalance;
+    }
+
+    //for UserServiceTest
+    public User(String username, String password, String firstName, String lastName) {
+        this.username = username;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+    public User(){
+    }
     //CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
-    //---------------------------------------------------------------------------------
-
-    public String getUserUUID() {
-        return userUUID;
-    }
-    public void setUserUUID(String userUUID) {
-        this.userUUID = userUUID;
+    @Value(correspondingColumn = "user_uuid")
+    public String getUserId() {
+        return userId;
     }
 
-    //----------------------------------------------------------------------------------
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
+    @Value(correspondingColumn = "username")
     public String getUsername() {
         return username;
     }
+
     public void setUsername(String username) {
         this.username = username;
     }
 
-    //-----------------------------------------------------------------------------------
-
+    @Value(correspondingColumn = "password")
     public String getPassword() {
         return password;
     }
+
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Value(correspondingColumn = "first_name")
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String first_name) {
+        this.firstName = first_name;
+    }
+
+    @Value(correspondingColumn = "last_name")
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String last_name) {
+        this.lastName = last_name;
+    }
+
+    @Value(correspondingColumn = "dollars_invested")
+    public double getUsdBalance() {
+        return usdBalance;
+    }
+
+    public void setUsdBalance(double usdBalance) {
+        this.usdBalance = usdBalance;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId='" + userId + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", usdBalance=" + usdBalance +
+                '}';
     }
 }
