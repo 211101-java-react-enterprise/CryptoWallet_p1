@@ -36,20 +36,6 @@ public class CoinService {
         currencyPairs = coinbaseDAO.getAllCoins();
     }
 
-    /**
-     *      CoinAmountService#isCoinAmountValid is used to check
-     *      validity of user entered data when attempting to
-     *      save data to database.
-     *
-     *      Parameters: CoinAmount newCoinAmount - To be checked
-     *
-     *      returns: true if CoinAmount is larger than 0
-     *               false if coin amount is less than or equal to 0
-     */
-    public boolean isCoinAmountValid(Coin newCoin) {
-        return newCoin.getAmount() > 0;
-    }
-
     public boolean isUserIdValid(Coin coin){
         return coin.getUser_Id() != null && !coin.getUser_Id().trim().equals("");
     }
