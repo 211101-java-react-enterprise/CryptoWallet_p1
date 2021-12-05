@@ -10,14 +10,12 @@ import com.revature.crypto.services.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.SQLException;
 
 public class RegistrationServlet extends HttpServlet {
 
@@ -41,17 +39,19 @@ public class RegistrationServlet extends HttpServlet {
 
             if (userService.registerNewUser(newUser)) {
                 resp.setStatus(201);
+                logger.trace("User persisted to database");
             } else {
                 //failed to persist user to database
+                logger.error("failed to persist user to database");
                 resp.setStatus(500);
             }
 
         } catch (MethodInvocationException | InvalidClassException e) {
             resp.setStatus(500);
-            e.printStackTrace();
+            logger.error("Internal Server Error");
         } catch (IOException | InvalidRequestException e) {
             resp.setStatus(400);
-            e.printStackTrace();
+            logger.error("User made a bad request");
         }
     }
 
@@ -70,17 +70,16 @@ public class RegistrationServlet extends HttpServlet {
             if (userService.deleteUser(deleteUser)) {
                 req.getSession(false).invalidate();
                 resp.setStatus(204);
+                logger.trace("User deleted from database successfully");
             } else {
                 resp.setStatus(500);
+                logger.error("Failed to delete user");
             }
-        } catch (MethodInvocationException | InvalidClassException e) {
-            e.printStackTrace();
+        } catch (MethodInvocationException | InvalidClassException | IOException e) {
+            logger.error("Internal Server Error");
             resp.setStatus(500);
-        } catch (IOException e) {
-            resp.setStatus(400);
-            e.printStackTrace();
         } catch (AuthenticationException e) {
-            e.printStackTrace();
+            logger.error("No user logged in");
             resp.setStatus(401);
         }
     }

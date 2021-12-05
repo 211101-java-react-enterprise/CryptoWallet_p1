@@ -3,7 +3,6 @@ package com.revature.crypto.models;
 jackson allows for easy parsing if there is a model with the same exact variables that are in the json.
 This model is meant to represent the getSupportedCurrencies method
  */
-import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.revature.CryptoORM_P1.annotations.Column;

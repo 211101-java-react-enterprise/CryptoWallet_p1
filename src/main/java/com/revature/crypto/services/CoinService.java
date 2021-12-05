@@ -1,16 +1,12 @@
 package com.revature.crypto.services;
 
-import com.revature.CryptoORM_P1.exception.InvalidClassException;
-import com.revature.CryptoORM_P1.exception.MethodInvocationException;
+
 import com.revature.crypto.daos.CoinDAO;
 import com.revature.crypto.daos.CoinbaseDAO;
 import com.revature.crypto.exceptions.InvalidRequestException;
-import com.revature.crypto.exceptions.JsonParsingException;
 import com.revature.crypto.models.Coin;
 import com.revature.crypto.models.User;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 
 /**
