@@ -57,13 +57,13 @@ public class SellCoinServlet extends HttpServlet {
             }
         } catch (UnauthorizedException e) {
             resp.setStatus(401);
-            e.printStackTrace();
+            logger.error("unauthorized to make make a sale");
         } catch (IOException | InvalidRequestException e) {
             resp.setStatus(400);
-            e.printStackTrace();
+            logger.error("User entered an invalid amount");
         } catch (MethodInvocationException | InvalidClassException e) {
             resp.setStatus(500);
-            e.printStackTrace();
+            logger.error("Internal server error");
         }
     }
 }
