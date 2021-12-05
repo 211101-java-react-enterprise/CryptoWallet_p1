@@ -9,6 +9,8 @@ import com.revature.crypto.models.Coin;
 import com.revature.crypto.models.User;
 import com.revature.crypto.services.CoinService;
 import com.revature.crypto.services.UserService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +23,7 @@ public class SellCoinServlet extends HttpServlet {
     private UserService userService;
     private CoinService coinService;
     private ObjectMapper objectMapper;
+    private static final Logger logger = LogManager.getLogger(BuyCoinServlet.class);
 
     public SellCoinServlet(UserService userService, CoinService coinService, ObjectMapper objectMapper) {
         this.userService = userService;

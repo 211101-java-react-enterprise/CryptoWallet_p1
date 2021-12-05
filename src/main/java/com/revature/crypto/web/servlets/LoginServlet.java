@@ -5,6 +5,8 @@ import com.revature.crypto.exceptions.AuthenticationException;
 import com.revature.crypto.exceptions.InvalidRequestException;
 import com.revature.crypto.models.User;
 import com.revature.crypto.services.UserService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
@@ -14,6 +16,7 @@ public class LoginServlet extends HttpServlet {
 
     private final UserService userService;
     private final ObjectMapper objectMapper;
+    private static final Logger logger = LogManager.getLogger(BuyCoinServlet.class);
 
     public LoginServlet(UserService userService, ObjectMapper objectMapper) {
         this.userService = userService;
@@ -36,15 +39,16 @@ public class LoginServlet extends HttpServlet {
 
 
             resp.setStatus(204); // success, but nothing to return (NO_CONTENT)
+            logger.trace("Login Successful");
 
         } catch (InvalidRequestException | UnrecognizedPropertyException e) {
             resp.setStatus(400); // user made a bad request
-            e.printStackTrace();
+            logger.error("User made a bad request");
         } catch (AuthenticationException e) {
-            e.printStackTrace();
+            logger.error("Invalid username or password!");
             resp.setStatus(401); // user provided incorrect credentials
         } catch (Exception e) {
-            e.printStackTrace(); // for dev purposes only, to be deleted before push to prod
+            logger.error("Intertnal server error"); // for dev purposes only, to be deleted before push to prod
             resp.setStatus(500);
         }
 
@@ -53,9 +57,11 @@ public class LoginServlet extends HttpServlet {
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
         HttpSession session = req.getSession(false);
         if (session != null) {
+            logger.trace("Logout Successful");
             resp.setStatus(204);
             session.invalidate(); // invalidates the session associated with this request (logging the user out)
         } else {
+            logger.error("No user logged in!");
             resp.setStatus(401);
         }
     }

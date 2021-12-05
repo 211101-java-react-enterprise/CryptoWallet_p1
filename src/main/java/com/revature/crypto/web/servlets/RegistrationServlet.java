@@ -7,6 +7,8 @@ import com.revature.crypto.exceptions.AuthenticationException;
 import com.revature.crypto.exceptions.InvalidRequestException;
 import com.revature.crypto.models.User;
 import com.revature.crypto.services.UserService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -21,6 +23,7 @@ public class RegistrationServlet extends HttpServlet {
 
     private final UserService userService;
     private final ObjectMapper objectMapper;
+    private static final Logger logger = LogManager.getLogger(BuyCoinServlet.class);
 
     public RegistrationServlet(UserService userService, ObjectMapper mapper) {
         this.userService = userService;

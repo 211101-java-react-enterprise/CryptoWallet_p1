@@ -60,7 +60,6 @@ public class BuyCoinServlet extends HttpServlet {
         } catch (UnauthorizedException e) {
             logger.error("the user is not authorized");
             resp.setStatus(401);
-            e.printStackTrace();
         }
     }
 }

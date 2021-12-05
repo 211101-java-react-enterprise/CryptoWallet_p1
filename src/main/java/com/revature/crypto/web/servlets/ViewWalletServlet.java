@@ -11,6 +11,8 @@ import com.revature.crypto.models.Coin;
 import com.revature.crypto.models.User;
 import com.revature.crypto.services.CoinService;
 import com.revature.crypto.services.UserService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -27,6 +29,7 @@ public class ViewWalletServlet extends HttpServlet {
     private UserService userService;
     private CoinService coinService;
     private ObjectMapper objectMapper;
+    private static final Logger logger = LogManager.getLogger(BuyCoinServlet.class);
 
     public ViewWalletServlet(UserService userService, CoinService coinService, ObjectMapper objectMapper) {
         this.userService = userService;
