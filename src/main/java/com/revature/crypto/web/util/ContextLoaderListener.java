@@ -42,11 +42,7 @@ public class ContextLoaderListener implements ServletContextListener {
         CoinDAO coinDAO = new CoinDAO();
         CoinbaseDAO coinbaseDAO = new CoinbaseDAO();
         CoinService coinService = null;
-        try {
-            coinService = new CoinService(coinDAO, coinbaseDAO);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        coinService = new CoinService(coinDAO, coinbaseDAO);
 
         LoginServlet loginServlet = new LoginServlet(userService, objectMapper);
         RegistrationServlet registrationServlet = new RegistrationServlet(userService, objectMapper);

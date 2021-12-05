@@ -39,7 +39,7 @@ public class CoinService {
     public boolean isUserIdValid(Coin coin){
         return coin.getUser_Id() != null && !coin.getUser_Id().trim().equals("");
     }
-    public List<Coin> getCoins(String user_uuid) throws InvalidClassException, MethodInvocationException, SQLException {
+    public List<Coin> getCoins(String user_uuid) {
         Coin coin = new Coin();
         coin.setUser_Id(user_uuid);
         if(isUserIdValid(coin)){
@@ -48,7 +48,7 @@ public class CoinService {
         return null;
     }
 
-    public double getTotalWalletValue(List<Coin> coins) throws IOException {
+    public double getTotalWalletValue(List<Coin> coins) {
         double result = 0;
 
         for (Coin coin : coins) {
@@ -64,7 +64,7 @@ public class CoinService {
         return false;
     }
 
-    public boolean buyCoin(Coin coin, User user) throws InvalidClassException, MethodInvocationException, SQLException, IOException, InvalidRequestException {
+    public boolean buyCoin(Coin coin, User user) {
         if (!validateCoinPair(coin.getCurrencyPair())) {
             throw new InvalidRequestException("Invalid Currency pair given!");
         }
@@ -90,7 +90,7 @@ public class CoinService {
     /**
      * takes in the coin the user wants to sell and the amount they want to sell
      */
-    public boolean sellCoin(Coin coin, User user) throws InvalidClassException, MethodInvocationException, SQLException, IOException, InvalidRequestException {
+    public boolean sellCoin(Coin coin, User user) {
         //check if user has coin they want to sell
         Coin ownedCoin = coinDAO.hasCoin(coin);
 

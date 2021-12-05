@@ -79,13 +79,14 @@ public class CoinServiceTest {
 
         //Arrange
         String validString = "valid";
-        when(mockCoinDAO.getCoinsByUser(new Coin())).thenReturn(new ArrayList<Coin>());
+
+        when(mockCoinDAO.getCoinsByUser(any())).thenReturn(new ArrayList<Coin>());
 
         //act
         List<Coin> actualResult = sut.getCoins(validString);
 
         //Assert
-        verify(mockCoinDAO, times(1)).getCoinsByUser(new Coin());
+        verify(mockCoinDAO, times(1)).getCoinsByUser(any());
         Assert.assertNotNull("Expect List to be returned" ,actualResult);
     }
 
