@@ -33,7 +33,7 @@ public class OrmDriver {
         String firstname = "Name";
         String lastname = "Johnson";
         double amount = 34.3;
-        User user = new User(id, username, password, firstname, lastname, amount);
+        //User user = new User(id, username, password, firstname, lastname, amount);
         Coin coin = new Coin("BTC-USD", 1, "UUID3");
 
 
@@ -79,7 +79,7 @@ public class OrmDriver {
 //
 //        //userDAO.save(user);
 //        User newUser = userService.authenticateUser(user);
-        System.out.println(userService.deleteUser(user));
+        //System.out.println(userService.deleteUser(user));
 
     }
 }
