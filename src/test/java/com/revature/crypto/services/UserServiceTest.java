@@ -1,11 +1,14 @@
 package com.revature.crypto.services;
 
 import com.revature.crypto.daos.UserDAO;
+import com.revature.crypto.exceptions.InvalidRequestException;
 import com.revature.crypto.models.User;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.sql.SQLException;
 
 import static org.mockito.Mockito.*;
 
@@ -53,25 +56,148 @@ public class UserServiceTest {
 
     }
 
-//    @Test
-//    public void test_isUserValid_returnsFalse_givenUserWithInvalidFirstName() {
-//
-//        // Arrange
-//        User invalidUser_1 = new User(null, "valid", "valid", "valid", "valid");
-//        User invalidUser_2 = new User("", "valid", "valid", "valid", "valid");
-//        User invalidUser_3 = new User("             ", "valid", "valid", "valid", "valid");
-//
-//        // Act
-//        boolean actualResult_1 = sut.isUserValid(invalidUser_1);
-//        boolean actualResult_2 = sut.isUserValid(invalidUser_2);
-//        boolean actualResult_3 = sut.isUserValid(invalidUser_3);
-//
-//        // Assert
-//        Assert.assertFalse("Expected user to be considered false.", actualResult_1);
-//        Assert.assertFalse("Expected user to be considered false.", actualResult_2);
-//        Assert.assertFalse("Expected user to be considered false.", actualResult_3);
-//
-//    }
+    @Test
+    public void test_isUserValid_returnsFalse_givenUserWithInvalidFirstName() {
+
+        // Arrange
+        User invalidUser_1 = new User("valid", "valid", "", "valid");
+        User invalidUser_2 = new User("valid", "valid", null, "valid");
+        User invalidUser_3 = new User("valid", "valid", "        ", "valid");
+
+        // Act
+        boolean actualResult_1 = sut.isUserValid(invalidUser_1);
+        boolean actualResult_2 = sut.isUserValid(invalidUser_2);
+        boolean actualResult_3 = sut.isUserValid(invalidUser_3);
+
+        // Assert
+        Assert.assertFalse("Expected user to be considered false.", actualResult_1);
+        Assert.assertFalse("Expected user to be considered false.", actualResult_2);
+        Assert.assertFalse("Expected user to be considered false.", actualResult_3);
+
+    }
+    @Test
+    public void test_isUserValid_returnsFalse_givenUserWithInvalidLastName() {
+
+        // Arrange
+        User invalidUser_1 = new User("valid", "valid", "valid", "");
+        User invalidUser_2 = new User("valid", "valid", "valid", null);
+        User invalidUser_3 = new User("valid", "valid", "valid", "         ");
+
+        // Act
+        boolean actualResult_1 = sut.isUserValid(invalidUser_1);
+        boolean actualResult_2 = sut.isUserValid(invalidUser_2);
+        boolean actualResult_3 = sut.isUserValid(invalidUser_3);
+
+        // Assert
+        Assert.assertFalse("Expected user to be considered false.", actualResult_1);
+        Assert.assertFalse("Expected user to be considered false.", actualResult_2);
+        Assert.assertFalse("Expected user to be considered false.", actualResult_3);
+
+    }
+    @Test
+    public void test_isUserValid_returnsFalse_givenUserWithInvalidUsername() {
+
+        // Arrange
+        User invalidUser_1 = new User("", "valid", "valid", "valid");
+        User invalidUser_2 = new User(null, "valid", "valid", "valid");
+        User invalidUser_3 = new User("      ", "valid", "valid", "valid");
+
+        // Act
+        boolean actualResult_1 = sut.isUserValid(invalidUser_1);
+        boolean actualResult_2 = sut.isUserValid(invalidUser_2);
+        boolean actualResult_3 = sut.isUserValid(invalidUser_3);
+
+        // Assert
+        Assert.assertFalse("Expected user to be considered false.", actualResult_1);
+        Assert.assertFalse("Expected user to be considered false.", actualResult_2);
+        Assert.assertFalse("Expected user to be considered false.", actualResult_3);
+
+    }
+    @Test
+    public void test_isUserValid_returnsFalse_givenUserWithInvalidPassword() {
+
+        // Arrange
+        User invalidUser_1 = new User("valid", "", "valid", "valid");
+        User invalidUser_2 = new User("valid", null, "valid", "valid");
+        User invalidUser_3 = new User("valid", "      ", "valid", "valid");
+
+        // Act
+        boolean actualResult_1 = sut.isUserValid(invalidUser_1);
+        boolean actualResult_2 = sut.isUserValid(invalidUser_2);
+        boolean actualResult_3 = sut.isUserValid(invalidUser_3);
+
+        // Assert
+        Assert.assertFalse("Expected user to be considered false.", actualResult_1);
+        Assert.assertFalse("Expected user to be considered false.", actualResult_2);
+        Assert.assertFalse("Expected user to be considered false.", actualResult_3);
+
+    }
+
+    @Test
+    public void test_registerNewUser_returns_true_given_valid_user() throws SQLException {
+        //Arrange
+        User validUser = new User("valid", "valid", "valid", "valid");
+        when(mockUserDAO.findUserByUsername(validUser)).thenReturn(validUser);
+        when(mockUserDAO.save(validUser)).thenReturn(true);
+
+        //Act
+        boolean actualResult = sut.registerNewUser(validUser);
+
+        //Assert
+        Assert.assertTrue("Expected true return with valid user: ", actualResult);
+        verify(mockUserDAO, times(1)).findUserByUsername(validUser);
+        verify(mockUserDAO, times(1)).save(validUser);
+    }
+
+    @Test (expected = InvalidRequestException.class)
+    public void test_registerNewUser_throws_invalid_request_exception_given_invalid_user() throws SQLException {
+        //Arrange
+        User invalidUser = new User(null, "valid", "valid", "valid");
+        when(mockUserDAO.findUserByUsername(invalidUser)).thenReturn(invalidUser);
+        when(mockUserDAO.save(invalidUser)).thenReturn(true);
+
+        //Act
+        try{
+            boolean actualResult = sut.registerNewUser(invalidUser);
+        } finally {
+            verify(mockUserDAO, times(0)).findUserByUsername(invalidUser);
+            verify(mockUserDAO, times(0)).save(invalidUser);
+        }
+    }
+
+    @Test
+    public void test_isUserAuthentic_returnsTrue_givenUserWithValidUsername() {
+
+        // Arrange
+        User validUser = new User("valid", "valid", "valid", "valid");
+
+        // Act
+        boolean actualResult_1 = sut.isUserAuthentic(validUser);
+
+        // Assert
+        Assert.assertTrue("Expected user to be considered false.", actualResult_1);
+    }
+
+    @Test
+    public void test_isUserAuthentic_returnsFalse_givenUserWithInvalidUsername() {
+
+        // Arrange
+        User invalidUser_1 = new User(null, "valid", "valid", "valid");
+        User invalidUser_2 = new User("", "valid", "valid", "valid");
+
+        // Act
+        boolean actualResult_1 = sut.isUserAuthentic(invalidUser_1);
+        boolean actualResult_2 = sut.isUserAuthentic(invalidUser_2);
+
+        // Assert
+        Assert.assertFalse("Expected user to be considered false.", actualResult_1);
+        Assert.assertFalse("Expected user to be considered false.", actualResult_2);
+    }
+
+
+
+
+
 //
 //    @Test
 //    public void test_registerNewUser_returnsTrue_givenValidUser() {
