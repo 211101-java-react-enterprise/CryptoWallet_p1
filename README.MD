@@ -7,3 +7,7 @@ This project was built to showcase a custom ORM implementation with custom annot
 object level mapping into our database.
 
 Github Link: https://github.com/211101-java-react-enterprise/CryptoORM_p1
+--------------------------------------------
+
+### Necessary Setup
+--------------------------------------------
