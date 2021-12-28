@@ -23,7 +23,7 @@ password={password}
 
 Included in the "/src/main/resources/" is a file called "crypto_wallet_table_instantiation.sql" which is a script that can be run on a database schema to set up the database tables and create some testing data for the application.
 
-This application was built to run on a tomcat server so you will need a tomcat 
+This application was built to run on a tomcat server so you will need a tomcat installation and you will need to install the war after starting the tomcat by running the command "mvn tomcat7:deploy"
 
 --------------------------------------------
 
@@ -42,6 +42,8 @@ POST: Registers a new user, expects Json in the following format:
 </pre>
 
 DELETE: Deletes a currently logged in users account.
+
+------------
 
 ### localhost:8080/crypto/login
 
